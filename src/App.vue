@@ -1,0 +1,75 @@
+<script setup lang="ts">
+import { onBeforeMount, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import router from './router'
+const address = ref('')
+
+let accessToken = ref<string | null>()
+// let accessToken = localStorage.getItem('accessToken')
+let refreshToken = ref<string | null>()
+// let refreshToken = localStorage.getItem('refreshToken')
+let gotAuthCode: string | null = 'false'
+
+const route = useRoute();
+
+async function load() {
+  gotAuthCode = localStorage.getItem('gotAuthCode')
+  console.log(gotAuthCode)
+  if (gotAuthCode !== 'true') {
+      router.replace('/sign-in')
+  } 
+
+  console.log(address.value)
+  accessToken.value = localStorage.getItem('accessToken')
+  refreshToken.value = localStorage.getItem('refreshToken')
+  if (localStorage.getItem('accessToken') && localStorage.getItem('refreshToken') && address.value === '') {
+    router.replace('/metamask')
+  }
+   
+
+  
+  // console.log(accessToken.value, refreshToken.value)
+
+  // if (gotAuthCode !== 'true') {  
+  //   console.log('after address')
+    
+  // }
+  // TODO: handle someone exiting google sign in and coming back to site
+}
+
+
+onMounted(async () => {
+  load()
+})
+
+
+function updateAddress(acc: string){
+  address.value = acc
+  router.replace('/')
+}
+
+function reload(){
+  load()
+}
+
+</script>
+
+<template>
+  <div v-if="address !== '' && (accessToken && refreshToken)">
+    <header>
+      <nav>
+          <div class="wrapper mb-4">
+              <RouterLink class="mx-3" to="/">Dashboard</RouterLink>
+              <RouterLink class="mx-3" to="/Analytics">Analytics</RouterLink>
+          </div>
+      </nav>
+      <RouterView :address="address" :tokens="{accessToken, refreshToken}" />
+    </header>
+
+    
+  </div>
+  <div v-else>
+    <RouterView  @updateAddress="updateAddress" :address="address" @reload="reload"/>
+  </div>
+</template>
+
