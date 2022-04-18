@@ -2,9 +2,9 @@
 import { onBeforeMount } from '@vue/runtime-core';
 import axios from 'axios'
 import { ref } from 'vue';
+
 let ticketPrice: number
 const ticketPriceEth = ref('')
-
 let ticketResalePrice: number
 const ticketResalePriceEth = ref('')
 
@@ -23,22 +23,14 @@ const props = defineProps([
 
 const coinApiKey = '46E55189-120B-4E56-983F-F59E6B027F20'
 
-var options = {
-  "method": "GET",
-  "hostname": "rest.coinapi.io",
-  "path": "/v1/exchangerate/BTC/USD",
-  "header": {"headers": {'X-CoinAPI-Key': coinApiKey }}
-};
-
 onBeforeMount(async () => {
   console.log('asdasda')
   try {
-    let coin = await axios.get('https://rest.coinapi.io/v1/exchangerate/ETH/GBP', {headers:{'X-CoinAPI-Key': coinApiKey }})
+    let coin = await axios.get('https://rest.coinapi.io/v1/exchangerate/ETH/GBP', { headers:{'X-CoinAPI-Key': coinApiKey }})
     rate.value = coin.data.rate
   } catch (error) {
     rate.value = '2346.58'
   }
-  
 })
 
 function getTicketEthAmount(ticketPrice: number) {
@@ -50,18 +42,43 @@ function getResaleEthAmount(ticketPrice: number) {
   ticketResalePriceEth.value = (ticketPrice / parseInt(rate.value)).toString()
 }
 
-function submitEvent(brandName: string, eventName: string, ticketAmount: number, ticketPrice: number, ticketResalePrice: number, date: string) {
-    console.log(brandName, eventName, ticketAmount, ticketPrice, ticketResalePrice, date)
-    console.log(file.value.files)
+async function submitEvent(name: string, eventName: string, ticketAmount: number, ticketPrice: number, resaleCost: number, date: string) {
+    console.log(name, eventName, ticketAmount, ticketPrice, resaleCost, date)
+    let formData = new FormData();
+    formData.append('file', file.value.files[0])
+
+    
+    // const imgInfo = await axios.post('http://localhost:3000/blockchain/upload-image', formData)
+    
+    const params = await axios.post('http://localhost:3000/blockchain/event-deploy-parameters', { 
+      file: {
+        cid: 'bafyreigfkbbcwihrtcq3bc2ny3m53zotqjdlnogw7j2goqpte4fqkt76bq',
+        url: 'ipfs://bafyreigfkbbcwihrtcq3bc2ny3m53zotqjdlnogw7j2goqpte4fqkt76bq/metadata.json'
+      },
+      name, eventName, ticketAmount, ticketPrice, resaleCost, date 
+    })
+
+  
+  const transactionParameters = {
+    ...params.data,
+    from: props.address
+  }
+
+  const txHash = await window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [transactionParameters],
+  });
+  console.log(txHash)
+    // upload image & data
+    // back end will return the encoded data to send to contract to create event
+    // when txn is returned then pay from metamask
+    // if complete send complete to back end to keep status as "pending"
+    // if any error in sending transaction send to back end to make status "failed"
 }
 
-console.log(props)
 </script>
 
 <template>
-    {{props.address}}
-    {{props.tokens.accessToken}}
-    {{props.tokens.refreshToken}}
   <main>   
     <div class="ml-3">
       <h1 class="text-4xl my-4">Dashboard</h1>
@@ -71,12 +88,12 @@ console.log(props)
       <div class="my-4">
             <!-- TODO: make sure image is a 2:1 ratio -->
         <h2 class="mb-2">Ticket Artwork: (2000 x 1000 px only)</h2>
-        <input type="file" ref="file" accept="image/jpeg, image/png, image/gif" id="img" name="img">
+        <input type="file" enctype="multipart/form-data" ref="file" accept="image/jpeg, image/png, image/gif" id="img" name="img">
       </div>
 
       <div class="my-4">
         <h2 class="mb-2">Event Company Name: </h2>
-        <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Boomtown"  v-model="brandName">
+        <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Boomtown"  v-model="name">
       </div>
 
       <div class="my-4">
@@ -123,8 +140,9 @@ console.log(props)
       </div>
 
       <div class="my-4">
-        <button class="mb-2" @click="submitEvent(brandName, eventName, ticketAmount, ticketPrice, ticketResalePrice, eventDate)">Create Event: </button>
+        <button class="mb-2" @click="submitEvent(name, eventName, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate)">Create Event: </button>
       </div>
+      
     </div>
   </main>
 </template>
