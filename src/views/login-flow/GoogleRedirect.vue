@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import HelloWorld from '@/components/HelloWorld.vue'
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount } from 'vue'
 import axios from 'axios'
-import router from '../../router'
 
 const route = useRoute();
 const emit = defineEmits(['reload'])

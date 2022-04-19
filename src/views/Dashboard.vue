@@ -43,7 +43,6 @@ function getResaleEthAmount(ticketPrice: number) {
 }
 
 async function submitEvent(name: string, eventName: string, ticketAmount: number, ticketPrice: number, resaleCost: number, date: string) {
-    console.log(name, eventName, ticketAmount, ticketPrice, resaleCost, date)
     let formData = new FormData();
     formData.append('file', file.value.files[0])
 
