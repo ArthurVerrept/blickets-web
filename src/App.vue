@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import router from './router'
+import request from './helpers/request'
 const address = ref('')
 
 let accessToken = ref<string | null>()
@@ -11,12 +12,10 @@ let gotAuthCode: string | null = 'false'
 
 async function load() {
   gotAuthCode = localStorage.getItem('gotAuthCode')
-  console.log(gotAuthCode)
   if (gotAuthCode !== 'true') {
       router.replace('/sign-in')
   } 
 
-  console.log(address.value)
   accessToken.value = localStorage.getItem('accessToken')
   refreshToken.value = localStorage.getItem('refreshToken')
   if (localStorage.getItem('accessToken') && localStorage.getItem('refreshToken') && address.value === '') {

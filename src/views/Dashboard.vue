@@ -2,6 +2,7 @@
 import { onBeforeMount } from '@vue/runtime-core';
 import axios from 'axios'
 import { ref } from 'vue';
+import request from '../helpers/request';
 
 let ticketPrice: number
 const ticketPriceEth = ref('')
@@ -10,7 +11,7 @@ const ticketResalePriceEth = ref('')
 
 let ticketAmount: number
 let eventName: string
-let brandName: string
+let name: string
 let eventDate: string
 
 const rate = ref('')
@@ -43,23 +44,25 @@ function getResaleEthAmount(ticketPrice: number) {
 }
 
 async function submitEvent(name: string, eventName: string, ticketAmount: number, ticketPrice: number, resaleCost: number, date: string) {
-    let formData = new FormData();
-    formData.append('file', file.value.files[0])
+  let formData = new FormData();
+  formData.append('file', file.value.files[0])
 
     
-    // const imgInfo = await axios.post('http://localhost:3000/blockchain/upload-image', formData)
-    
-    const params = await axios.post('http://localhost:3000/blockchain/event-deploy-parameters', { 
-      file: {
-        cid: 'bafyreigfkbbcwihrtcq3bc2ny3m53zotqjdlnogw7j2goqpte4fqkt76bq',
-        url: 'ipfs://bafyreigfkbbcwihrtcq3bc2ny3m53zotqjdlnogw7j2goqpte4fqkt76bq/metadata.json'
-      },
-      name, eventName, ticketAmount, ticketPrice, resaleCost, date 
-    })
+  const imgInfo = await request.post('/blockchain/upload-image', formData)
+
+  const params = await request.post('/blockchain/event-deploy-parameters', { 
+    // file: imgInfo, 
+    file: { cid: "bafyreifaecy4uihzskf6dls3fiborxk62ag2zmkzse2dqkzs3xc4mofxzi", url:"ipfs://bafyreifaecy4uihzskf6dls3fiborxk62ag2zmkzse2dqkzs3xc4mofxzi/metadata.json"}, 
+    name, 
+    eventName, 
+    ticketAmount, 
+    ticketPrice, 
+    resaleCost 
+  })
 
   
   const transactionParameters = {
-    ...params.data,
+    ...params,
     from: props.address
   }
 
@@ -67,7 +70,22 @@ async function submitEvent(name: string, eventName: string, ticketAmount: number
     method: 'eth_sendTransaction',
     params: [transactionParameters],
   });
+
+
+  const eventParams = {
+    txHash,
+    cid: imgInfo.cid,
+    date
+  }
+  
+  await request.post('/event/create-event', eventParams)
+
   console.log(txHash)
+
+  // post to event ms to create event with cid, txhash, userId, deployedStatus, createdTime, eventDate
+
+
+
     // upload image & data
     // back end will return the encoded data to send to contract to create event
     // when txn is returned then pay from metamask
