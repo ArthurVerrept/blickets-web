@@ -16,6 +16,7 @@ let eventDate: string
 
 const rate = ref('')
 const file = ref<any>(null)
+const myEvents = ref<any>([])
 
 const props = defineProps([
   'address',
@@ -25,13 +26,13 @@ const props = defineProps([
 const coinApiKey = '46E55189-120B-4E56-983F-F59E6B027F20'
 
 onBeforeMount(async () => {
-  console.log('asdasda')
   try {
     let coin = await axios.get('https://rest.coinapi.io/v1/exchangerate/ETH/GBP', { headers:{'X-CoinAPI-Key': coinApiKey }})
     rate.value = coin.data.rate
   } catch (error) {
     rate.value = '2346.58'
   }
+  myEvents.value = await request.get('/event/my-created-events')
 })
 
 function getTicketEthAmount(ticketPrice: number) {
@@ -48,7 +49,7 @@ async function submitEvent(name: string, eventName: string, ticketAmount: number
   formData.append('file', file.value.files[0])
 
     
-  const imgInfo = await request.post('/blockchain/upload-image', formData)
+  // const imgInfo = await request.post('/blockchain/upload-image', formData)
 
   const params = await request.post('/blockchain/event-deploy-parameters', { 
     // file: imgInfo, 
@@ -74,13 +75,25 @@ async function submitEvent(name: string, eventName: string, ticketAmount: number
 
   const eventParams = {
     txHash,
-    cid: imgInfo.cid,
+    cid: "bafyreifaecy4uihzskf6dls3fiborxk62ag2zmkzse2dqkzs3xc4mofxzi",
     date
   }
+
+
+  // const eventParams = {
+  //   txHash: '0x2d903fce741655bf6829c6afb3fea0e67657f785ce914538e461a469881e8a44',
+  //   cid: 'bafyreifaecy4uihzskf6dls3fiborxk62ag2zmkzse2dqkzs3xc4mofxzi',
+  //   eventDate: '2022-04-27'
+  // }
+  console.log(eventParams)
   
   await request.post('/event/create-event', eventParams)
 
-  console.log(txHash)
+  myEvents.value = await request.get('/event/my-created-events')
+
+
+
+  // console.log(txHash)
 
   // post to event ms to create event with cid, txhash, userId, deployedStatus, createdTime, eventDate
 
@@ -93,73 +106,90 @@ async function submitEvent(name: string, eventName: string, ticketAmount: number
     // if any error in sending transaction send to back end to make status "failed"
 }
 
+async function checkStatus(txHash: string) {
+  console.log(txHash)
+  await request.post('/blockchain/transaction-status', {txHash})
+}
+
 </script>
 
 <template>
   <main>   
-    <div class="ml-3">
-      <h1 class="text-4xl my-4">Dashboard</h1>
-      
-      <h2 class="text-2xl my-4">Create Event: </h2>
+    <div class="flex justify-evenly">
+      <div class="ml-3">
+        <h1 class="text-4xl my-4">Dashboard</h1>
+        
+        <h2 class="text-2xl my-4">Create Event: </h2>
 
-      <div class="my-4">
-            <!-- TODO: make sure image is a 2:1 ratio -->
-        <h2 class="mb-2">Ticket Artwork: (2000 x 1000 px only)</h2>
-        <input type="file" enctype="multipart/form-data" ref="file" accept="image/jpeg, image/png, image/gif" id="img" name="img">
-      </div>
+        <div class="my-4">
+              <!-- TODO: make sure image is a 2:1 ratio -->
+          <h2 class="mb-2">Ticket Artwork: (2000 x 1000 px only)</h2>
+          <input type="file" enctype="multipart/form-data" ref="file" accept="image/jpeg, image/png, image/gif" id="img" name="img">
+        </div>
 
-      <div class="my-4">
-        <h2 class="mb-2">Event Company Name: </h2>
-        <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Boomtown"  v-model="name">
-      </div>
+        <div class="my-4">
+          <h2 class="mb-2">Event Company Name: </h2>
+          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Boomtown"  v-model="name">
+        </div>
 
-      <div class="my-4">
-        <h2 class="mb-2">Event Name: </h2>
-        <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Chapter 8"  v-model="eventName">
-      </div>
+        <div class="my-4">
+          <h2 class="mb-2">Event Name: </h2>
+          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Chapter 8"  v-model="eventName">
+        </div>
 
-      <div class="my-4">
-        <h2 class="mb-2">Ticket Amount: </h2>
-        <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="60000" v-model="ticketAmount">
-      </div>
+        <div class="my-4">
+          <h2 class="mb-2">Ticket Amount: </h2>
+          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="60000" v-model="ticketAmount">
+        </div>
 
-      <div class="my-4">
-        <p>1 eth ~ £{{parseInt(rate)}}</p>
-        <div class="flex">
-          <div>
-            <h2 class="mb-2">Ticket Price: </h2>
-            <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="£250" v-model="ticketPrice" @keyup="getTicketEthAmount(ticketPrice)">
-          </div>
-          <div>
-            <h2 class="mb-2">in eth: </h2>
-            <input class="shadow appearance-none border rounded pointer-events-none py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" :value="ticketPriceEth">
+        <div class="my-4">
+          <p>1 eth ~ £{{parseInt(rate)}}</p>
+          <div class="flex">
+            <div>
+              <h2 class="mb-2">Ticket Price: </h2>
+              <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="£250" v-model="ticketPrice" @keyup="getTicketEthAmount(ticketPrice)">
+            </div>
+            <div>
+              <h2 class="mb-2">in eth: </h2>
+              <input class="shadow appearance-none border rounded pointer-events-none py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" :value="ticketPriceEth">
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="my-4">
-        <div class="flex">
-          <div>
-            <!-- TODO: add tooltip explaining how the resale cost works -->
-            <h2 class="mb-2">Resale Price: </h2>
-            <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="£250" v-model="ticketResalePrice" @keyup="getResaleEthAmount(ticketResalePrice)">
-          </div>
-          <div>
-            <h2 class="mb-2">in eth: </h2>
-            <input class="shadow appearance-none border rounded pointer-events-none py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" :value="ticketResalePriceEth"/>
+        <div class="my-4">
+          <div class="flex">
+            <div>
+              <!-- TODO: add tooltip explaining how the resale cost works -->
+              <h2 class="mb-2">Resale Price: </h2>
+              <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="£250" v-model="ticketResalePrice" @keyup="getResaleEthAmount(ticketResalePrice)">
+            </div>
+            <div>
+              <h2 class="mb-2">in eth: </h2>
+              <input class="shadow appearance-none border rounded pointer-events-none py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" :value="ticketResalePriceEth"/>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="my-4">
-        <h2 class="mb-2">Date: </h2>
-        <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="date" v-model="eventDate">
-      </div>
+        <div class="my-4">
+          <h2 class="mb-2">Date: </h2>
+          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="date" v-model="eventDate">
+        </div>
 
-      <div class="my-4">
-        <button class="mb-2" @click="submitEvent(name, eventName, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate)">Create Event: </button>
+        <div class="my-4">
+          <button class="mb-2" @click="submitEvent(name, eventName, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate)">Create Event: </button>
+        </div>
+        
       </div>
-      
+      <div>
+        <div v-for="event in myEvents.events" class="bg-red-300 p-5 relative">
+          <p>Cid: <a :href="`https://${event.cid}.ipfs.nftstorage.link/metadata.json`">https://{{event.cid}}.ipfs.nftstorage.link/metadata.json</a></p>
+          <p>Contract Address: {{event.contractAddress}}</p>
+          <p>Transaction Hash: {{event.txHash}}</p>
+          <p>Deployed Status: {{event.deployedStatus}}</p>
+          <p>Event Date: {{event.eventDate}}</p>
+          <button @click="checkStatus(event.txHash)" class="mt-2">Refresh Status</button>
+        </div>
+      </div>
     </div>
   </main>
 </template>

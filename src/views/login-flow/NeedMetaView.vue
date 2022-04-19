@@ -8,7 +8,6 @@ onBeforeMount(async () => {
 })
 
 async function openMeta() {
-    console.log('asdas')
     const [account]= await window.ethereum.request({ method: 'eth_requestAccounts' });
     emit('updateAddress', account)
 }
