@@ -8,7 +8,6 @@ class Request {
             const res = await axios.post(this.baseUrl + endpoint, data, { headers })
             return res.data
         } catch (error: any) {
-            console.log(error.response.data)
             if  (error.response.data.statusCode == 401 && error.response.data.message == "TokenExpiredError") {
                 const newAccessToken = await this.refreshToken()
                 localStorage.setItem('accessToken', newAccessToken)

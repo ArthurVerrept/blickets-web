@@ -17,6 +17,7 @@ let eventDate: string
 const rate = ref('')
 const file = ref<any>(null)
 const myEvents = ref<any>([])
+const checkStatusLoading = ref(false)
 
 const props = defineProps([
   'address',
@@ -48,12 +49,9 @@ async function submitEvent(name: string, eventName: string, ticketAmount: number
   let formData = new FormData();
   formData.append('file', file.value.files[0])
 
-    
-  // const imgInfo = await request.post('/blockchain/upload-image', formData)
+  const imgInfo = await request.post('/blockchain/upload-image', formData)
 
   const params = await request.post('/blockchain/event-deploy-parameters', { 
-    // file: imgInfo, 
-    file: { cid: "bafyreifaecy4uihzskf6dls3fiborxk62ag2zmkzse2dqkzs3xc4mofxzi", url:"ipfs://bafyreifaecy4uihzskf6dls3fiborxk62ag2zmkzse2dqkzs3xc4mofxzi/metadata.json"}, 
     name, 
     eventName, 
     ticketAmount, 
@@ -61,7 +59,6 @@ async function submitEvent(name: string, eventName: string, ticketAmount: number
     resaleCost 
   })
 
-  
   const transactionParameters = {
     ...params,
     from: props.address
@@ -72,43 +69,46 @@ async function submitEvent(name: string, eventName: string, ticketAmount: number
     params: [transactionParameters],
   });
 
-
   const eventParams = {
     txHash,
-    cid: "bafyreifaecy4uihzskf6dls3fiborxk62ag2zmkzse2dqkzs3xc4mofxzi",
-    date
+    cid: imgInfo.cid,
+    eventDate: date
   }
 
-
-  // const eventParams = {
-  //   txHash: '0x2d903fce741655bf6829c6afb3fea0e67657f785ce914538e461a469881e8a44',
-  //   cid: 'bafyreifaecy4uihzskf6dls3fiborxk62ag2zmkzse2dqkzs3xc4mofxzi',
-  //   eventDate: '2022-04-27'
-  // }
   console.log(eventParams)
   
   await request.post('/event/create-event', eventParams)
 
   myEvents.value = await request.get('/event/my-created-events')
 
-
-
   // console.log(txHash)
 
   // post to event ms to create event with cid, txhash, userId, deployedStatus, createdTime, eventDate
 
-
-
-    // upload image & data
-    // back end will return the encoded data to send to contract to create event
-    // when txn is returned then pay from metamask
-    // if complete send complete to back end to keep status as "pending"
-    // if any error in sending transaction send to back end to make status "failed"
+  // upload image & data
+  // back end will return the encoded data to send to contract to create event
+  // when txn is returned then pay from metamask
+  // if complete send complete to back end to keep status as "pending"
+  // if any error in sending transaction send to back end to make status "failed"
 }
 
 async function checkStatus(txHash: string) {
-  console.log(txHash)
+  checkStatusLoading.value = true
   await request.post('/blockchain/transaction-status', {txHash})
+  checkStatusLoading.value = false
+  myEvents.value = await request.get('/event/my-created-events')
+}
+
+function getColor(eventStatus: string) {
+  console.log(eventStatus)
+  let color = 'bg-orange-300'
+  if(eventStatus === 'success') {
+    color = 'bg-green-300'
+  } 
+  if (eventStatus === 'failed') {
+    color = 'bg-red-300'
+  }
+  return color + ' p-5 relative'
 }
 
 </script>
@@ -181,13 +181,44 @@ async function checkStatus(txHash: string) {
         
       </div>
       <div>
-        <div v-for="event in myEvents.events" class="bg-red-300 p-5 relative">
-          <p>Cid: <a :href="`https://${event.cid}.ipfs.nftstorage.link/metadata.json`">https://{{event.cid}}.ipfs.nftstorage.link/metadata.json</a></p>
-          <p>Contract Address: {{event.contractAddress}}</p>
-          <p>Transaction Hash: {{event.txHash}}</p>
-          <p>Deployed Status: {{event.deployedStatus}}</p>
-          <p>Event Date: {{event.eventDate}}</p>
-          <button @click="checkStatus(event.txHash)" class="mt-2">Refresh Status</button>
+        <div v-for="event in myEvents.events" :class="getColor(event.deployedStatus)" class="flex mt-2">
+          <div class="w-36 mx-4">
+            <p class="w-24">Cid: </p>
+            <p class="truncate"><a :href="`https://${event.cid}.ipfs.nftstorage.link/metadata.json`">https://{{event.cid}}.ipfs.nftstorage.link/metadata.json</a></p>
+          </div>
+
+          <div class="w-44 mx-4">
+            <p> Contract Address: </p>
+            <p class="truncate">{{event.contractAddress}}</p>
+          </div>
+
+          <div class="w-36 mx-4">
+            <p>Transaction Hash:</p>
+            <p class="truncate">{{event.txHash}}</p>
+          </div>
+
+          <div class="w-36 mx-4">
+            <p>Deployed Status:</p>
+            <p>{{event.deployedStatus}}</p>
+          </div>
+
+          <div class="w-36 mx-4">
+              <p>Event Date: </p>
+              <p class="truncate">{{event.eventDate}}</p>
+          </div>
+
+
+          <div v-if="checkStatusLoading && event.deployedStatus !== 'success'">
+              <button class="disabled pointer-events-none">Loading...</button>
+            </div>
+            <div v-if="!checkStatusLoading && event.deployedStatus === 'pending'">
+              <button @click="checkStatus(event.txHash)">Refresh Status</button>
+            </div>
+            <div v-if="event.deployedStatus === 'success'">
+              <p>view event</p>
+            </div>
+              <button @click="checkStatus(event.txHash)">Refresh Status</button>
+
         </div>
       </div>
     </div>
