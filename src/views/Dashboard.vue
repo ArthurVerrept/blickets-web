@@ -37,12 +37,12 @@ onBeforeMount(async () => {
 })
 
 function getTicketEthAmount(ticketPrice: number) {
-  ticketPriceEth.value = (ticketPrice / parseInt(rate.value)).toString()
+  ticketPriceEth.value = (ticketPrice / parseInt(rate.value)).toFixed(9).toString()
 }
 
 
 function getResaleEthAmount(ticketPrice: number) {
-  ticketResalePriceEth.value = (ticketPrice / parseInt(rate.value)).toString()
+  ticketResalePriceEth.value = (ticketPrice / parseInt(rate.value)).toFixed(9).toString()
 }
 
 async function submitEvent(name: string, symbol: string, ticketAmount: number, ticketPrice: number, resaleCost: number, date: string) {
@@ -118,107 +118,102 @@ function getColor(eventStatus: string) {
 
 <template>
   <main>   
-    <div class="flex justify-evenly">
-      <div class="ml-3 w-1/3">
-        <h1 class="text-4xl my-4">Dashboard</h1>
-        
-        <h2 class="text-2xl my-4">Create Event: </h2>
+    <div class="px-24">
+      <div class="flex justify-evenly">
+        <div class="w-1/3 pr-12">
+          <h1 class="text-4xl text-gray-900 my-4">Create event</h1>
+          <form>
+            <label class="block mb-2 text-sm font-medium text-gray-900" for="user_avatar">Upload Ticket Image</label>
+            <input class="block w-full text-sm text-gray-900 bg-stone-200  cursor-pointer focus:outline-none focus:border-transparent" aria-describedby="user_avatar_help" id="user_avatar" type="file" enctype="multipart/form-data" ref="file" accept="image/jpeg, image/png, image/gif" name="img">
+            <div class="mt-1 text-sm text-gray-500 mb-6" id="user_avatar_help">350px x 350px recommended</div>
 
-        <div class="my-4">
-              <!-- TODO: make sure image is a 2:1 ratio -->
-          <h2 class="mb-2">Ticket Artwork: (350 x 350 recommended)</h2>
-          <input type="file" enctype="multipart/form-data" ref="file" accept="image/jpeg, image/png, image/gif" id="img" name="img">
-        </div>
-
-        <div class="my-4">
-          <h2 class="mb-2">Event Name: </h2>
-          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Boomtown Chapter 13"  v-model="name">
-        </div>
-
-        <div class="my-4">
-          <h2 class="mb-2">Event Symbol: </h2>
-          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="BOOM"  v-model="symbol">
-        </div>
-
-        <div class="my-4">
-          <h2 class="mb-2">Ticket Amount: </h2>
-          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="60000" v-model="ticketAmount">
-        </div>
-
-        <div class="my-4">
-          <p>1 eth ~ £{{parseInt(rate)}}</p>
-          <div class="flex">
-            <div>
-              <h2 class="mb-2">Ticket Price: </h2>
-              <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="£250" v-model="ticketPrice" @keyup="getTicketEthAmount(ticketPrice)">
+            <div class="mb-6">
+              <label for="text" class="block mb-2 text-sm font-medium text-gray-900">Event Name</label>
+              <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5" placeholder="Boomtown Chapter 13 - 2022" v-model="name" required>
             </div>
-            <div>
-              <h2 class="mb-2">in eth: </h2>
-              <input class="shadow appearance-none border rounded pointer-events-none py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" :value="ticketPriceEth">
+            <div class="mb-6">
+              <label for="text" class="block mb-2 text-sm font-medium text-gray-900">Event Symbol</label>
+              <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5"  placeholder="BOOM" v-model="symbol" required>
             </div>
-          </div>
-        </div>
-
-        <div class="my-4">
-          <div class="flex">
-            <div>
-              <!-- TODO: add tooltip explaining how the resale cost works -->
-              <h2 class="mb-2">Resale Price: </h2>
-              <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" placeholder="£250" v-model="ticketResalePrice" @keyup="getResaleEthAmount(ticketResalePrice)">
+            <div class="mb-6">
+              <label for="text" class="block mb-2 text-sm font-medium text-gray-900">Ticket Amount</label>
+              <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5"  placeholder="1000" v-model="ticketAmount" required>
             </div>
-            <div>
-              <h2 class="mb-2">in eth: </h2>
-              <input class="shadow appearance-none border rounded pointer-events-none py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="number" :value="ticketResalePriceEth"/>
+
+
+            <div class="grid xl:grid-cols-2 xl:gap-6">
+              <div class="mb-6">
+                <label for="number" class="block mb-2 text-sm font-medium text-gray-900">Ticket Price £</label>
+                <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5"  placeholder="250" v-model="ticketPrice" @keyup="getTicketEthAmount(ticketPrice)" required>
+              </div>
+              <div class="mb-6">
+                <label for="number" class="block mb-2 text-sm font-small text-gray-900">Ethereum</label>
+                <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  pointer-events-none disabled block w-full p-2.5"  :value="ticketPriceEth" required>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="my-4">
-          <h2 class="mb-2">Date: </h2>
-          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="date" v-model="eventDate">
-        </div>
+            <div class="grid xl:grid-cols-2 xl:gap-6">
+              <div class="mb-6">
+                <label for="number" class="block mb-2 text-sm font-medium text-gray-900">Resale Price</label>
+                <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5"  placeholder="250" v-model="ticketResalePrice" @keyup="getResaleEthAmount(ticketResalePrice)" required>
+              </div>
+              <div class="">
+                <label for="number" class="block mb-2 text-sm font-small text-gray-900 mt-7"/>
+                <input type="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  pointer-events-none disabled block w-full p-2.5"  :value="ticketResalePriceEth" required>
+              </div>
+            </div>
 
-        <div class="my-4">
-          <button class="mb-2" @click="submitEvent(name, symbol, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate)">Create Event: </button>
+            <div class="grid xl:grid-cols-2 xl:gap-6">
+              <div class="mb-6">
+                <label for="number" class="block mb-2 text-sm font-medium text-gray-900">Date</label>
+                <input type="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5"  placeholder="250"  v-model="eventDate" required>
+              </div>
+            </div>
+            <div class="grid xl:grid-cols-2 xl:gap-6">
+              <a @click="submitEvent(name, symbol, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate)" class="inline-flex w-full justify-center items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 hover:bg-stone-900 focus:outline-none cursor-pointer">
+                Create Event
+                <svg class="ml-2 -mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </a>
+            </div>
+          </form>
         </div>
         
-      </div>
-      <div class="w-2/3 p-10">
-        <div v-for="event in myEvents.events" :class="getColor(event.deployedStatus)" class="flex mt-2 rounded-lg">
-          <div class="w-1/6 overflow-hidden mx-4">
-            <p class="w-24">{{event.eventName}} </p>
-            <p class="truncate">({{event.symbol}})</p>
-          </div>
-          <div class="w-1/6 overflow-hidden mx-4">
-            <p class="w-24">image url: </p>
-            <p class="truncate"><a :href="`${event.imageUrl}`">{{event.imageUrl}}</a></p>
-          </div>
-
-          <div class="w-1/6 overflow-hidden mx-4">
-            <p> Contract Address: </p>
-            <p class="truncate">{{event.contractAddress}}</p>
-          </div>
-
-          <div class="w-1/6 mx-4 ">
-            <p>Deployed Status:</p>
-            <p><b>{{event.deployedStatus}}</b></p>
-          </div>
-
-          <div class="w-1/6 mx-4">
-              <p>Event Date: </p>
-              <p class="truncate">{{event.eventDate}}</p>
-          </div>
-
-
-          <div v-if="checkStatusLoading && event.deployedStatus !== 'success'">
-              <button class="disabled pointer-events-none">Loading...</button>
+      
+        <div class="w-2/3">
+          <h1 class="text-4xl my-4 text-gray-900">My events</h1>
+          <div class="grid grid-cols-3 gap-4">
+            <div v-for="event in myEvents.events" class="mb-4">
+              <div class="max-w-sm bg-white  border border-gray-200">
+                <img :src="event.imageUrl" alt="" />
+                <div class="p-5">
+                  <h5 class="text-xl truncate font-bold tracking-tight text-stone-800">{{event.eventName}}</h5>
+                  <h5  class="mb-2 text-md truncate font-bold tracking-tight text-stone-800">({{event.symbol}})</h5>
+                  <p class="mb-3 font-normal text-stone-800 truncate">Contract Address: {{event.contractAddress}}</p>
+                  <p class="mb-3 font-normal text-stone-800 truncate">Deployed Status: <b>{{event.deployedStatus}}</b></p>
+                  <p class="mb-3 font-normal text-stone-800 truncate">Event Date: {{new Date(event.eventDate * 1000).getDay()}}/{{new Date(event.eventDate * 1000).getMonth()}}/{{new Date(event.eventDate * 1000).getFullYear()}}</p>
+                  
+                  <div v-if="checkStatusLoading && event.deployedStatus !== 'success'">
+                    <a class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 cursor-default">
+                      Loading...
+                      <svg class="ml-2 -mr-1 w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </a>
+                  </div>
+                  <div v-if="!checkStatusLoading && event.deployedStatus === 'pending'">
+                    <a @click="checkStatus(event.txHash)" class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-900 hover:bg-stone-900 cursor-pointer">
+                      Refresh Status
+                      <svg class="ml-2 -mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </a>
+                  </div>
+                  <div v-if="event.deployedStatus === 'success'">
+                    <a class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 hover:bg-stone-900 focus:outline-none cursor-pointer">
+                      View Event
+                      <svg class="ml-2 -mr-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div v-if="!checkStatusLoading && event.deployedStatus === 'pending'">
-              <button @click="checkStatus(event.txHash)">Refresh Status</button>
-            </div>
-            <div v-if="event.deployedStatus === 'success'">
-              <p>info</p>
-            </div>
+          </div>
         </div>
       </div>
     </div>

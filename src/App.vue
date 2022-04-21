@@ -48,7 +48,8 @@ function reload(){
       <nav>
           <div class="wrapper mb-4">
               <RouterLink class="mx-3" to="/">Dashboard</RouterLink>
-              <RouterLink class="mx-3" to="/Analytics">Analytics</RouterLink>
+              <RouterLink class="mx-3" to="/analytics">Analytics</RouterLink>
+              <RouterLink class="mx-3" to="/view-events">Events</RouterLink>
           </div>
       </nav>
       <RouterView :address="address" :tokens="{accessToken, refreshToken}" />
