@@ -10,7 +10,7 @@ let ticketResalePrice: number
 const ticketResalePriceEth = ref('')
 
 let ticketAmount: number
-let eventName: string
+let symbol: string
 let name: string
 let eventDate: string
 
@@ -45,15 +45,15 @@ function getResaleEthAmount(ticketPrice: number) {
   ticketResalePriceEth.value = (ticketPrice / parseInt(rate.value)).toString()
 }
 
-async function submitEvent(name: string, eventName: string, ticketAmount: number, ticketPrice: number, resaleCost: number, date: string) {
+async function submitEvent(name: string, symbol: string, ticketAmount: number, ticketPrice: number, resaleCost: number, date: string) {
   let formData = new FormData();
   formData.append('file', file.value.files[0])
 
   const imgInfo = await request.post('/blockchain/upload-image', formData)
-
+  console.log('imginfo', imgInfo)
   const params = await request.post('/blockchain/event-deploy-parameters', { 
     name, 
-    eventName, 
+    symbol, 
     ticketAmount, 
     ticketPrice, 
     resaleCost 
@@ -71,7 +71,8 @@ async function submitEvent(name: string, eventName: string, ticketAmount: number
 
   const eventParams = {
     txHash,
-    cid: imgInfo.cid,
+    // here change this to be the image url from the metadata
+    imageUrl: imgInfo.imageUrl,
     eventDate: date
   }
 
@@ -123,18 +124,18 @@ function getColor(eventStatus: string) {
 
         <div class="my-4">
               <!-- TODO: make sure image is a 2:1 ratio -->
-          <h2 class="mb-2">Ticket Artwork: (2000 x 1000 px only)</h2>
+          <h2 class="mb-2">Ticket Artwork: (350 x 350 recommended)</h2>
           <input type="file" enctype="multipart/form-data" ref="file" accept="image/jpeg, image/png, image/gif" id="img" name="img">
         </div>
 
         <div class="my-4">
-          <h2 class="mb-2">Event Company Name: </h2>
-          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Boomtown"  v-model="name">
+          <h2 class="mb-2">Event Name: </h2>
+          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Boomtown Chapter 13"  v-model="name">
         </div>
 
         <div class="my-4">
-          <h2 class="mb-2">Event Name: </h2>
-          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Chapter 8"  v-model="eventName">
+          <h2 class="mb-2">Event Symbol: </h2>
+          <input class="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="BOOM"  v-model="symbol">
         </div>
 
         <div class="my-4">
@@ -176,30 +177,30 @@ function getColor(eventStatus: string) {
         </div>
 
         <div class="my-4">
-          <button class="mb-2" @click="submitEvent(name, eventName, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate)">Create Event: </button>
+          <button class="mb-2" @click="submitEvent(name, symbol, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate)">Create Event: </button>
         </div>
         
       </div>
       <div>
         <div v-for="event in myEvents.events" :class="getColor(event.deployedStatus)" class="flex mt-2">
           <div class="w-36 mx-4">
-            <p class="w-24">Cid: </p>
-            <p class="truncate"><a :href="`https://${event.cid}.ipfs.nftstorage.link/metadata.json`">https://{{event.cid}}.ipfs.nftstorage.link/metadata.json</a></p>
+            <p class="w-24">image url: </p>
+            <p class="truncate"><a :href="`${event.imageUrl}`">{{event.imageUrl}}</a></p>
           </div>
 
-          <div class="w-44 mx-4">
+          <div class="w-24 mx-4">
             <p> Contract Address: </p>
             <p class="truncate">{{event.contractAddress}}</p>
           </div>
 
-          <div class="w-36 mx-4">
+          <div class="w-24 mx-4">
             <p>Transaction Hash:</p>
             <p class="truncate">{{event.txHash}}</p>
           </div>
 
-          <div class="w-36 mx-4">
+          <div class="w-36 mx-4 ">
             <p>Deployed Status:</p>
-            <p>{{event.deployedStatus}}</p>
+            <p><b>{{event.deployedStatus}}</b></p>
           </div>
 
           <div class="w-36 mx-4">
@@ -217,8 +218,6 @@ function getColor(eventStatus: string) {
             <div v-if="event.deployedStatus === 'success'">
               <p>view event</p>
             </div>
-              <button @click="checkStatus(event.txHash)">Refresh Status</button>
-
         </div>
       </div>
     </div>
