@@ -11,9 +11,11 @@ class Request {
         } catch (error: any) {
             if  (error.response.data.statusCode == 401 && error.response.data.message == "TokenExpiredError") {
                 const newAccessToken = await this.refreshToken()
-                localStorage.setItem('accessToken', newAccessToken)
-                const res = await axios.post(this.baseUrl + endpoint, data, { headers: { Authorization: `Bearer ${newAccessToken}` } })
-                return res.data
+                if(newAccessToken) {
+                    localStorage.setItem('accessToken', newAccessToken)
+                    const res = await axios.post(this.baseUrl + endpoint, data, { headers: { Authorization: `Bearer ${newAccessToken}` } })
+                    return res.data
+                }
             }
   
             return error
@@ -30,9 +32,11 @@ class Request {
             console.log(error)
             if  (error.response.data.statusCode == 401 && error.response.data.message == "TokenExpiredError") {
                 const newAccessToken = await this.refreshToken()
-                localStorage.setItem('accessToken', newAccessToken)
-                const res = await axios.get(this.baseUrl + endpoint, { headers: { Authorization: `Bearer ${newAccessToken}` } })
-                return res.data
+                if(newAccessToken) {
+                    localStorage.setItem('accessToken', newAccessToken)
+                    const res = await axios.get(this.baseUrl + endpoint, { headers: { Authorization: `Bearer ${newAccessToken}` } })
+                    return res.data
+                }
             }
             return error
         }
