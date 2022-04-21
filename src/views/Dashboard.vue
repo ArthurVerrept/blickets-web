@@ -73,7 +73,9 @@ async function submitEvent(name: string, symbol: string, ticketAmount: number, t
     txHash,
     // here change this to be the image url from the metadata
     imageUrl: imgInfo.imageUrl,
-    eventDate: date
+    eventDate: new Date(date).getTime(),
+    eventName: name,
+    symbol
   }
 
   console.log(eventParams)
@@ -102,12 +104,12 @@ async function checkStatus(txHash: string) {
 
 function getColor(eventStatus: string) {
   console.log(eventStatus)
-  let color = 'bg-orange-300'
+  let color = 'bg-gradient-to-r from-orange-300 to-amber-300'
   if(eventStatus === 'success') {
-    color = 'bg-green-300'
+    color = 'bg-gradient-to-r bg-green-300  bg-lime-300'
   } 
   if (eventStatus === 'failed') {
-    color = 'bg-red-300'
+    color = 'bg-gradient-to-r bg-red-300 bg-rose-300'
   }
   return color + ' p-5 relative'
 }
@@ -117,7 +119,7 @@ function getColor(eventStatus: string) {
 <template>
   <main>   
     <div class="flex justify-evenly">
-      <div class="ml-3">
+      <div class="ml-3 w-1/3">
         <h1 class="text-4xl my-4">Dashboard</h1>
         
         <h2 class="text-2xl my-4">Create Event: </h2>
@@ -181,29 +183,28 @@ function getColor(eventStatus: string) {
         </div>
         
       </div>
-      <div>
-        <div v-for="event in myEvents.events" :class="getColor(event.deployedStatus)" class="flex mt-2">
-          <div class="w-36 mx-4">
+      <div class="w-2/3 p-10">
+        <div v-for="event in myEvents.events" :class="getColor(event.deployedStatus)" class="flex mt-2 rounded-lg">
+          <div class="w-1/6 overflow-hidden mx-4">
+            <p class="w-24">{{event.eventName}} </p>
+            <p class="truncate">({{event.symbol}})</p>
+          </div>
+          <div class="w-1/6 overflow-hidden mx-4">
             <p class="w-24">image url: </p>
             <p class="truncate"><a :href="`${event.imageUrl}`">{{event.imageUrl}}</a></p>
           </div>
 
-          <div class="w-24 mx-4">
+          <div class="w-1/6 overflow-hidden mx-4">
             <p> Contract Address: </p>
             <p class="truncate">{{event.contractAddress}}</p>
           </div>
 
-          <div class="w-24 mx-4">
-            <p>Transaction Hash:</p>
-            <p class="truncate">{{event.txHash}}</p>
-          </div>
-
-          <div class="w-36 mx-4 ">
+          <div class="w-1/6 mx-4 ">
             <p>Deployed Status:</p>
             <p><b>{{event.deployedStatus}}</b></p>
           </div>
 
-          <div class="w-36 mx-4">
+          <div class="w-1/6 mx-4">
               <p>Event Date: </p>
               <p class="truncate">{{event.eventDate}}</p>
           </div>
@@ -216,7 +217,7 @@ function getColor(eventStatus: string) {
               <button @click="checkStatus(event.txHash)">Refresh Status</button>
             </div>
             <div v-if="event.deployedStatus === 'success'">
-              <p>view event</p>
+              <p>info</p>
             </div>
         </div>
       </div>
