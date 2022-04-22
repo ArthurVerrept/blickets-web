@@ -44,7 +44,6 @@ class Request {
 
     async refreshToken() {
         const headers = { Authorization: `Bearer ${localStorage.getItem('refreshToken')}` }
-        console.log('yo')
         try {
             const res = await axios.post(this.baseUrl + '/user/refresh-token', {}, { headers })
             return res.data.accessToken

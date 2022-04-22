@@ -29,7 +29,7 @@ async function getAllEvents() {
 }
 
 async function buyTicket(contractAddress: string) {
-  console.log(contractAddress)
+  await request.post('/blockchain/buy-tickets-params', {contractAddress, purchaseAmount: 1})
   return ''
 } 
 
@@ -57,8 +57,8 @@ function getPercetage(event: any) {
                 <div class="flex flex-col mt-4 leading-normal justify-start">
                     <h5 class="text-xl truncate font-bold tracking-tight text-stone-800">{{event.eventName}}</h5>
                     <h5 class="mb-1 text-md truncate font-bold tracking-tight text-stone-800">{{event.symbol}}</h5>
-                    <p class="mb-1 font-normal text-stone-800 truncate">Event Date: {{new Date(event.eventDate * 1000).getDay()}}/{{new Date(event.eventDate * 1000).getMonth()}}/{{new Date(event.eventDate * 1000).getFullYear()}}</p>
-                    <p class="mb-1 font-normal text-stone-800 truncate"> ${{ (parseFloat(ethPriceUSD) * parseFloat(event.ticketPrice)).toFixed(2) }} </p>
+                    <p class="mb-1 font-normal text-stone-800 truncate">Event Date: {{ new Date(parseInt(event.eventDate)).getDate() }} {{ new Date(parseInt(event.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(event.eventDate)).getFullYear() }}</p>
+                    <p class="mb-1 font-normal text-stone-800 truncate">Start Time: {{ new Date(parseInt(event.eventDate)).toLocaleTimeString() }} </p>
                     <p>{{ event.ticketAmount }} Tickets</p>
                 </div>
               </div>

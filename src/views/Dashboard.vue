@@ -13,6 +13,7 @@ let ticketAmount: number
 let symbol: string
 let name: string
 let eventDate: string
+let eventTime: string
 
 const rate = ref('')
 const file = ref<any>(null)
@@ -42,7 +43,7 @@ function getResaleEthAmount(ticketPrice: number) {
   ticketResalePriceEth.value = (ticketPrice / parseInt(rate.value)).toFixed(9).toString()
 }
 
-async function submitEvent(name: string, symbol: string, ticketAmount: number, ticketPrice: number, resaleCost: number, date: string) {
+async function submitEvent(name: string, symbol: string, ticketAmount: number, ticketPrice: number, resaleCost: number, date: string, time: string) {
   createEventLoading.value = true
 
   let formData = new FormData();
@@ -64,16 +65,16 @@ async function submitEvent(name: string, symbol: string, ticketAmount: number, t
       from: props.address
     }
 
-    const txHash = await window.ethereum.request({
+    const txHash = `await window.ethereum.request({
       method: 'eth_sendTransaction',
       params: [transactionParameters],
-    });
+    });`
 
     const eventParams = {
       txHash,
       // here change this to be the image url from the metadata
       imageUrl: imgInfo.imageUrl,
-      eventDate: new Date(date).getTime(),
+      eventDate: new Date(date + ' ' + time + ':00').getTime().toString(),
       eventName: name,
       symbol
     }
@@ -156,13 +157,17 @@ function getColor(eventStatus: string) {
             </div>
 
             <div class="grid xl:grid-cols-2 xl:gap-6">
-              <div class="mb-6">
-                <label for="number" class="block mb-2 text-sm font-medium text-gray-900">Date</label>
-                <input type="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5"  v-model="eventDate" required>
-              </div>
+                <div>
+                  <label for="number" class="block mb-2 text-sm font-medium text-gray-900">Date</label>
+                  <input type="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5"  v-model="eventDate" required>
+                </div>
+                <div class="mb-6">
+                  <label for="number" class="block mb-2 text-sm font-medium text-gray-900">Time</label>
+                  <input type="time" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm  focus:ring-stone-700 block w-full p-2.5"  v-model="eventTime" required>
+                </div>
             </div>
             <div v-if="!createEventLoading" class="grid xl:grid-cols-2 xl:gap-6">
-              <a @click="submitEvent(name, symbol, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate)" class="inline-flex w-full justify-center items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 hover:bg-stone-900 focus:outline-none cursor-pointer">
+              <a @click="submitEvent(name, symbol, ticketAmount, ticketPriceEth, ticketResalePriceEth, eventDate, eventTime)" class="inline-flex w-full justify-center items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 hover:bg-stone-900 focus:outline-none cursor-pointer">
                 Create Event
                 <svg class="ml-2 -mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
               </a>
@@ -188,7 +193,8 @@ function getColor(eventStatus: string) {
                   <h5 class="mb-2 text-md truncate font-bold tracking-tight text-stone-800">({{event.symbol}})</h5>
                   <p class="mb-3 font-normal text-stone-800 truncate">Contract Address: {{event.contractAddress}}</p>
                   <p class="mb-3 font-normal text-stone-800 truncate">Deployed Status: <b>{{event.deployedStatus}}</b></p>
-                  <p class="mb-3 font-normal text-stone-800 truncate">Event Date: {{new Date(event.eventDate * 1000).getDay()}}/{{new Date(event.eventDate * 1000).getMonth()}}/{{new Date(event.eventDate * 1000).getFullYear()}}</p>
+                  <p class="mb-3 font-normal text-stone-800 truncate">Event Date: {{ new Date(parseInt(event.eventDate)).getDate() }} {{ new Date(parseInt(event.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(event.eventDate)).getFullYear() }}</p>
+                  <p class="mb-3 font-normal text-stone-800 truncate">Start Time: {{ new Date(parseInt(event.eventDate)).toLocaleTimeString() }} </p>
                   
                   <div v-if="checkStatusLoading && event.deployedStatus !== 'success'">
                     <a class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 cursor-default">
