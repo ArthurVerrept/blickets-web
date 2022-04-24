@@ -11,7 +11,7 @@ onBeforeMount(async () => {
   console.log(res.data.accessToken)
   localStorage.setItem('accessToken', res.data.accessToken)
   localStorage.setItem('refreshToken', res.data.refreshToken)
-  emit('reload')
+  emit('reload', res.data.addresses)
 })
 
 </script>

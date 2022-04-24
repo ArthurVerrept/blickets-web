@@ -1,8 +1,15 @@
 import axios from 'axios'
+import {inject} from 'vue'
 import router from '../router'
 
 class Request {
+    handleError: any
+    constructor(handleError: any){
+        this.handleError = handleError
+    }
+    someFunc = inject('errorPopup');
     baseUrl = 'http://localhost:3000'
+
     async post(endpoint: string, data?: any) {
         const headers = { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
         try {
@@ -17,8 +24,7 @@ class Request {
                     return res.data
                 }
             }
-  
-            return error
+            this.handleError(error)
         }
     }   
 
@@ -29,7 +35,6 @@ class Request {
             return res.data
 
         } catch (error: any) {
-            console.log(error)
             if  (error.response.data.statusCode == 401 && error.response.data.message == "TokenExpiredError") {
                 const newAccessToken = await this.refreshToken()
                 if(newAccessToken) {
@@ -38,7 +43,8 @@ class Request {
                     return res.data
                 }
             }
-            return error
+          
+            this.handleError(error)
         }
     }
 
@@ -61,6 +67,6 @@ class Request {
 }
 
 
-const request = new Request()
 
-export default request
+
+export default Request

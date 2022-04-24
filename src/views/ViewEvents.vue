@@ -2,7 +2,6 @@
 import { onBeforeMount } from '@vue/runtime-core';
 import axios from 'axios'
 import { ref } from 'vue';
-import request from '../helpers/request';
 
 const events = ref<any>([])
 const eventsLoading = ref(false)
@@ -11,26 +10,38 @@ const ethPriceUSD = ref('0')
 
 const props = defineProps([
   'address',
-  'tokens'
+  'tokens',
+  'request'
 ])
 
 const coinApiKey = '46E55189-120B-4E56-983F-F59E6B027F20'
 
 onBeforeMount(async () => {
   eventsLoading.value = true
-  const priceRes = await request.get('/blockchain/eth-price')
+  const priceRes = await props.request.get('/blockchain/eth-price')
   events.value = await getAllEvents()
   ethPriceUSD.value = priceRes.ethPriceUSD
   eventsLoading.value = false
 })
 
 async function getAllEvents() {
-  return await request.get('/event/all-events')
+  return await  props.request.get('/event/all-events')
 }
 
 async function buyTicket(contractAddress: string) {
-  await request.post('/blockchain/buy-tickets-params', {contractAddress, purchaseAmount: 1})
-  return ''
+  const params = await  props.request.post('/blockchain/buy-tickets-params', {contractAddress, purchaseAmount: 1})
+  console.log(params)
+  const transactionParameters = {
+      ...params,
+      from: props.address
+    }
+
+    const txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [transactionParameters],
+    });
+
+    console.log(txHash)
 } 
 
 function getPercetage(event: any) {
@@ -58,7 +69,7 @@ function getPercetage(event: any) {
                     <h5 class="text-xl truncate font-bold tracking-tight text-stone-800">{{event.eventName}}</h5>
                     <h5 class="mb-1 text-md truncate font-bold tracking-tight text-stone-800">{{event.symbol}}</h5>
                     <p class="mb-1 font-normal text-stone-800 truncate">Event Date: {{ new Date(parseInt(event.eventDate)).getDate() }} {{ new Date(parseInt(event.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(event.eventDate)).getFullYear() }}</p>
-                    <p class="mb-1 font-normal text-stone-800 truncate">Start Time: {{ new Date(parseInt(event.eventDate)).toLocaleTimeString() }} </p>
+                    <p class="mb-1 font-normal text-stone-800 truncate">Start Time: {{ new Date(parseInt(event.eventDate)).toLocaleTimeString().split(':', 2)[0] }}:{{new Date(parseInt(event.eventDate)).toLocaleTimeString().split(':', 2)[1]}} </p>
                     <p>{{ event.ticketAmount }} Tickets</p>
                 </div>
               </div>

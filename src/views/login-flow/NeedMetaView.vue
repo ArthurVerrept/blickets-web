@@ -1,15 +1,24 @@
 <script setup lang="ts">
-import { defineEmits, onBeforeMount, onMounted, ref } from 'vue'
+import { defineEmits, onBeforeMount, defineProps } from 'vue'
+import request from '../../helpers/request';
 
 const emit = defineEmits(['updateAddress'])
+const props = defineProps(['addresses'])
+
 onBeforeMount(async () => {
-  const [account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+  const account = await getAndUpdateAccount()
   emit('updateAddress', account)
 })
 
 async function openMeta() {
-    const [account]= await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const account = await getAndUpdateAccount()
     emit('updateAddress', account)
+}
+
+async function getAndUpdateAccount() {
+  const [account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+ 
+  return account
 }
 </script>
 
