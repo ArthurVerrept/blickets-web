@@ -78,7 +78,7 @@ async function getAndUpdateAccount() {
     </div>
     <div class="flex justify-center">
       <div class="flex flex-col">
-        <p class="font-['Shrikhand'] text-[#E43C4A] font-bold text-7xl mb-36 text-center pt-20">Blickets</p>
+        <p class="font-['Shrikhand'] text-[#E43C4A] font-bold text-7xl mb-32 text-center pt-20">Blickets</p>
         <!-- TODO: show how address will be linked to account with icons n dat -->
         <!-- <div class="mt-12">
           <div class="flex justify-center">
@@ -91,7 +91,8 @@ async function getAndUpdateAccount() {
             <p class="">this address will be used for payments and is where you will get paid</p>
           </div>
         </div> -->
-        <p class="font-['Montserrat'] text-3xl font-bold mb-16 text-center ">Connect with metamask before moving on</p>
+        <p class="font-['Montserrat'] text-3xl font-bold mb-8 text-center ">Connect with metamask before moving on</p>
+        <p class="font-['Montserrat'] text-md mb-16 text-center">By connecting with metamask you link your address to this account</p>
         <div class="flex justify-center">
           <button @click="openMeta()" class="cursor-pointer bg-[#E43C4A] flex p-5"> 
             

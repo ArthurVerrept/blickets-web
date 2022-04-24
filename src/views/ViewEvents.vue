@@ -25,7 +25,7 @@ onBeforeMount(async () => {
 })
 
 async function getAllEvents() {
-  return await  props.request.get('/event/all-events')
+  return await props.request.get('/event/all-events')
 }
 
 async function buyTicket(contractAddress: string) {
