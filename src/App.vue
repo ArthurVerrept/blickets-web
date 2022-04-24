@@ -82,7 +82,7 @@ function reload(addresses: string[]){
                 <RouterLink to="/view-events" class="block py-2 pr-4 pl-3 text-stone-800 bg-blue-700 rounded bg-transparent md:p-0 dark:text-white">What's On</RouterLink>
               </li>
               <li class="max-w-10">
-                <p class="text-truncate">{{address.substring(0, 5)}}...{{address.substring(38)}}</p>
+                <span class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">{{address.substring(0, 4)}}...{{address.substring(39)}}</span>
               </li>
             </ul>
           </div>
