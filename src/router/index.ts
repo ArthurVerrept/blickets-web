@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SignIn from '../views/login-flow/SignInView.vue'
-import Dashboard from '../views/Dashboard.vue'
+import Home from '../views/Home.vue'
 import NeedMeta from '../views/login-flow/NeedMetaView.vue'
-import ViewEvents from '../views/ViewEvents.vue'
+import Dashboard from '../views/Dashboard.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'dashboard',
-      component: Dashboard,
+      name: 'home',
+      component: Home,
       props: true
     },
     {
@@ -33,9 +33,9 @@ const router = createRouter({
       component: () => import('../views/login-flow/GoogleRedirect.vue')
     },
     {
-      path: '/view-events',
-      name: 'viewEvents',
-      component: ViewEvents,
+      path: '/dashboard',
+      name: 'dashboard',
+      component: Dashboard,
       props: true
     },
   ]
