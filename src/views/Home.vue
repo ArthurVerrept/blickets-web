@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount } from '@vue/runtime-core';
 import axios from 'axios'
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const events = ref<any>([])
 const eventsLoading = ref(true)
@@ -18,6 +18,13 @@ const props = defineProps([
   'tokens',
   'request'
 ])
+
+watch(() => props.address, async() => {
+  myTicketsLoading.value = true
+  myTickets.value = await getMyTickets()
+  myTicketsLoading.value = false
+});
+
 
 onBeforeMount(async () => {
   const priceRes = await props.request.get('/blockchain/eth-price')
