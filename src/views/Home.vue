@@ -33,7 +33,7 @@ async function getAllEvents() {
 }
 
 async function getMyTickets() {
-  const res =  await props.request.get('/blockchain/my-events')
+  const res =  await props.request.post('/blockchain/my-events', { walletAddress: props.address })
   myTicketsLoading.value = false
 
   let returnArray: any = { events: [] }
@@ -48,7 +48,7 @@ async function getMyTickets() {
 async function buyTicket(contractAddress: string) {
   buyTicketLoading.value = true
   buyTicketLoadingText.value = 'Preparing your personal one of one ticket...'
-  const params = await  props.request.post('/blockchain/buy-tickets-params', {contractAddress, purchaseAmount: 1})
+  const params = await  props.request.post('/blockchain/buy-tickets-params', {contractAddress, walletAddress: props.address, purchaseAmount: 1})
   console.log(params)
   const transactionParameters = {
       ...params,
