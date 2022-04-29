@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue'
+import { useRoute } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
 import router from './router'
 import Request from './helpers/request'
 
 const address = ref('')
-
+const route = useRoute()
 let request = ref()
 let accessToken = ref<string | null>()
 // let accessToken = localStorage.getItem('accessToken')
@@ -33,8 +34,41 @@ async function load() {
   // TODO: handle someone exiting google sign in and coming back to site
 }
 
+watch(() => route.fullPath, async() => {
+  const navLinks = document.querySelectorAll('.navText')
+  navLinks.forEach((link) => {
+    link.classList.remove(`font-['Shrikhand']`)
+    link.classList.remove(`text-[#E43C4A]`)
+  })
+  console.log(navLinks)
+  if(route.fullPath === '/') {
+    document.querySelector('#homeNavText')?.classList.add(`font-['Shrikhand']`)
+    document.querySelector('#homeNavText')?.classList.add(`text-[#E43C4A]`)
+  }
+  if(route.fullPath === '/account') {
+    document.querySelector('#accountNavText')?.classList.add(`font-['Shrikhand']`)
+    document.querySelector('#accountNavText')?.classList.add(`text-[#E43C4A]`)
+  }
+
+  if(route.fullPath === '/dashboard') {
+    document.querySelector('#hostsNavText')?.classList.add(`font-['Shrikhand']`)
+    document.querySelector('#hostsNavText')?.classList.add(`text-[#E43C4A]`)
+    document.querySelector('#dashboardNavText')?.classList.add(`font-['Shrikhand']`)
+    document.querySelector('#dashboardNavText')?.classList.add(`text-[#E43C4A]`)
+  }
+
+    if(route.fullPath === '/analytics') {
+    document.querySelector('#hostsNavText')?.classList.add(`font-['Shrikhand']`)
+    document.querySelector('#hostsNavText')?.classList.add(`text-[#E43C4A]`)
+    document.querySelector('#analyticsNavText')?.classList.add(`font-['Shrikhand']`)
+    document.querySelector('#analyticsNavText')?.classList.add(`text-[#E43C4A]`)
+  }
+});
+
+
 onMounted(async () => {
   request.value = new Request(handleError)
+  console.log('asas')
   load()
 })
 
@@ -86,20 +120,20 @@ function showNav(){
           <div class="hidden w-full md:block w-auto" id="mobile-menu">
             <ul class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
               <li>
-                <RouterLink to="/" class="block py-2 pr-4 pl-3 text-stone-800 bg-blue-700 rounded bg-transparent md:p-0 dark:text-white">Home</RouterLink>
+                <RouterLink to="/" class="block homeNav py-2 pr-4 pl-3 text-stone-800 bg-blue-700 rounded bg-transparent md:p-0 dark:text-white"><p id="homeNavText" class="navText">Home</p></RouterLink>
               </li>
               <li>
-                <RouterLink @click="showNav" to="/account" class="block py-2 pr-4 pl-3 text-stone-800 bg-blue-700 rounded bg-transparent md:p-0 dark:text-white">Account</RouterLink>
+                <RouterLink to="/account" id="account" class="block py-2 pr-4 pl-3 text-stone-800 bg-blue-700 rounded bg-transparent md:p-0 dark:text-white"><p id="accountNavText" class="navText">Account</p></RouterLink>
               </li>
               <li class="relative">
-                <button @click="showNav" class="block text-sm font-medium text-stone-800 flex items-center">Hosts <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></button>
+                <button @click="showNav" class="block text-sm font-medium text-stone-800 flex items-center"> <p id="hostsNavText" class="navText">Hosts</p><svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></button>
                 <div id="dropdown" class="z-20 absolute hidden bg-white divide-y divide-gray-100 right-[-40px] top-6 rounded shadow w-36 dark:bg-gray-700 dark:divide-gray-600">
                     <ul :class="`py-1 text-sm text-gray-700 dark:text-gray-400`" aria-labelledby="dropdownLargeButton">
                       <li>
-                        <RouterLink @click="showNav" to="/dashboard" class="block px-4 py-2 text-stone-800 bg-blue-700 rounded bg-transparent">Dashboard</RouterLink>
+                        <RouterLink @click="showNav" to="/dashboard" class="block px-4 py-2 text-stone-800 bg-blue-700 rounded bg-transparent"> <p id="dashboardNavText" class="navText">Dashboard</p></RouterLink>
                       </li>
                       <li>
-                        <RouterLink @click="showNav" to="/analytics" class="block px-4 py-2 text-stone-800 bg-blue-700 rounded bg-transparent">Analytics</RouterLink>
+                        <RouterLink @click="showNav" to="/analytics" class="block px-4 py-2 text-stone-800 bg-blue-700 rounded bg-transparent"> <p id="analyticsNavText" class="navText">Analytics</p></RouterLink>
                       </li>
 
                     </ul>
