@@ -39,7 +39,7 @@ onMounted(async () => {
 
 function updateAddress(acc: string){
   address.value = acc
-  router.replace('/')
+  router.replace('/view-events')
 }
 
 function handleError(error: any){
