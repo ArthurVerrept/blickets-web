@@ -10,7 +10,6 @@ const myTickets = ref<any>([])
 const myTicketsLoading = ref(true)
 const buyTicketLoading = ref(false)
 const buyTicketLoadingText = ref('')
-const rate = ref('')
 const ethPriceUSD = ref('0')
 
 const props = defineProps([
@@ -27,6 +26,7 @@ watch(() => props.address, async() => {
 
 
 onBeforeMount(async () => {
+  await props.request.get('/user/me')
   const priceRes = await props.request.get('/blockchain/eth-price')
   events.value = await getAllEvents()
   myTickets.value = await getMyTickets()

@@ -65,10 +65,8 @@ watch(() => route.fullPath, async() => {
   }
 });
 
-
 onMounted(async () => {
   request.value = new Request(handleError)
-  console.log('asas')
   load()
 })
 
@@ -88,6 +86,10 @@ function handleError(error: any){
 }
 
 window.ethereum.on('accountsChanged', function (accounts: string[]) {
+  console.log(accounts)
+  if(!accounts.length) {
+    router.replace('/metamask')
+  }
   address.value = accounts[0]
   // TODO: get events again
 })

@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { defineEmits, onBeforeMount, defineProps } from 'vue'
-import request from '../../helpers/request';
+import { defineEmits, onBeforeMount, defineProps, ref } from 'vue'
+
+let user = ref<any>()
+let userLoading = ref<any>(true)
 
 const emit = defineEmits(['updateAddress'])
-const props = defineProps(['addresses'])
+const props = defineProps(['addresses', 'request'])
 
 onBeforeMount(async () => {
+  user.value = await props.request.get('/user/me')
+  userLoading.value = false
   const account = await getAndUpdateAccount()
   emit('updateAddress', account)
 })
@@ -78,21 +82,26 @@ async function getAndUpdateAccount() {
     </div>
     <div class="flex justify-center">
       <div class="flex flex-col">
-        <p class="font-['Shrikhand'] text-[#E43C4A] font-bold text-7xl mb-32 text-center pt-20">Blickets</p>
-        <!-- TODO: show how address will be linked to account with icons n dat -->
-        <!-- <div class="mt-12">
-          <div class="flex justify-center">
-            <p class="font-bold mr-1">Address:</p> <p> {{account}}</p>
+        <p class="font-['Shrikhand'] text-[#E43C4A] font-bold text-7xl mb-10 text-center pt-20">Blickets</p>
+        <div class="mb-10 flex justify-center">
+          <div v-if="!userLoading">
+            <img class="w-16 h-16 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" :src="user.picture" alt="Bordered avatar">
           </div>
-          <div class="flex justify-center">
-            <p class="font-bold">will be linked to your account, however you can be changed in the future.</p>
+          <div v-else>
+            <svg class="w-16 h-16 p-1 rounded-full ring-2 fill-gray-400 ring-gray-400" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
           </div>
-          <div class="flex justify-center mt-5 text-sm">
-            <p class="">this address will be used for payments and is where you will get paid</p>
+          <svg class="w-10 h-10 mt-3 mx-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+          <img src="../../assets/eth-glyph-colored.png" class="h-16" alt="ethereum logo">
+        </div>
+          <p class="font-['Montserrat'] text-3xl font-bold mb-8 text-center ">Connect with metamask to move on</p>
+          <p class="font-['Montserrat'] text-md text-center max-w-2xl text-center">By connecting with metamask you link your address to this account, an ethereum address is required to buy tickets, check in to events, and more.</p>
+          <div class="w-full flex justify-center my-5">
+            <a href="https://codehs.com/tutorial/jkeesh/how-to-set-up-an-ethereum-wallet-on-metamask" target="blank"><button type="button" class="py-2.5 px-5 w-42 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white border border-gray-200 hover:text-red-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">How to setup metamask</button></a>
           </div>
+        <!-- <div class="flex">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+          <a href="https://codehs.com/tutorial/jkeesh/how-to-set-up-an-ethereum-wallet-on-metamask" class="text-center mb-12">how to setup metamask</a>
         </div> -->
-        <p class="font-['Montserrat'] text-3xl font-bold mb-8 text-center ">Connect with metamask before moving on</p>
-        <p class="font-['Montserrat'] text-md mb-16 text-center">By connecting with metamask you link your address to this account</p>
         <div class="flex justify-center">
           <button @click="openMeta()" class="cursor-pointer bg-[#E43C4A] flex p-5"> 
             
@@ -103,7 +112,7 @@ async function getAndUpdateAccount() {
       </div>
     </div>
     <div class="flex text-sm justify-center">
-      <div class="mt-24">
+      <div class="mt-12">
         <p class="flex flex-col justify-center">powered by metamask</p>
       </div>    
     </div>

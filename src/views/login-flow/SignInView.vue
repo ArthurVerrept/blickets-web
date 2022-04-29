@@ -66,7 +66,11 @@ async function getUrl() {
       </div>
     </div>
      <p class="font-['Shrikhand'] text-[#E43C4A] font-bold text-7xl text-center pt-20">Blickets</p>
-     <div class="flex justify-center mt-24">
+     <p class="text-center mt-10 text-lg font-bold">Why do you need to create a Blickets account?</p>
+     <div class="w-full flex justify-center">
+      <p class=" mt-3 text-lg font-normal max-w-2xl text-center">By creating an account we can link tickets on the blockchain tickets to you. On the next step you connect a wallet to your account, If you wish for your wallet to <b>remain anonymous</b>, it is recommended to setup a new wallet</p>
+     </div>
+     <div class="flex justify-center mt-12">
       <button @click="getUrl" class="cursor-pointer bg-[#E43C4A] flex p-5">  
         <img src="../../assets/google.png" alt="google icon" class="w-10">
         <p class="text-2xl mt-1 font-bold text-white ml-2">sign in with google</p>
