@@ -113,6 +113,7 @@ async function getMasterKey() {
         expireMS = new Date().getTime() + 10000
           const urlNewMasterCodeUrl = '/event/master-key?contractAddress=' + currentTicket.value.contractAddress + '&address=' + props.address
           const urlNewMasterCode = await props.request.get(urlNewMasterCodeUrl)
+          console.log(parseInt(urlNewMasterCode.expiryTime))
       }
     }, 200)
   } 
