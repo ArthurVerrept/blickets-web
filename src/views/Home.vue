@@ -138,12 +138,6 @@ async function getMasterKey() {
 }
 
 function newQRCode() {
-  // const urlNewMasterCodeUrl = '/event/master-key?contractAddress=' + currentTicket.value.contractAddress
-  // const urlNewMasterCod = await props.request.get(urlNewMasterCodeUrl)
-  // const url = '/event/validate?contractAddress=' + currentTicket.value.contractAddress + '&address=' + props.address + '&ticketId=' + currentTicket.value.ticketNumber + '&masterCode=master';
-  // await props.request.get(url)
-  console.log(masterKey.value.masterKey)
-  console.log(masterKey.value.masterKey + currentTicket.value.contractAddress)
   qrCode.value = masterKey.value.masterKey + currentTicket.value.contractAddress
   qrCodeVar.value = qrCode.toDataURL();
   qrReloading.value = false
@@ -286,7 +280,7 @@ function newQRCode() {
                 </div>
                 <div class="ml-5">
                   <p class="font-bold text-xl mt-4">{{currentTicket.eventName}}</p>
-                  <p class="mt-2">name:</p>
+                  <p class="mt-4">name:</p>
                   <p class="font-bold">{{user.name}}</p>
                   <p class="mt-2">date:</p>
                   <p class="font-bold">{{ new Date(parseInt(currentTicket.eventDate)).getDate() }} {{ new Date(parseInt(currentTicket.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(currentTicket.eventDate)).getFullYear() }} - {{ new Date(parseInt(currentTicket.eventDate)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) }}</p>
@@ -294,7 +288,7 @@ function newQRCode() {
                   <p class="font-bold">{{currentTicket.ticketNumber}} of {{currentTicket.ticketAmount}} </p>
                 </div>
               </div>
-              <p class="mt-16">{{currentTicket.description}} </p>
+              <p class="mt-12">{{currentTicket.description}} </p>
           </div>
         </div> 
       </div>

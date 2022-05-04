@@ -57,12 +57,12 @@ watch(() => route.fullPath, async() => {
     document.querySelector('#dashboardNavText')?.classList.add(`text-[#E43C4A]`)
   }
 
-    if(route.fullPath === '/analytics') {
-    document.querySelector('#hostsNavText')?.classList.add(`font-['Shrikhand']`)
-    document.querySelector('#hostsNavText')?.classList.add(`text-[#E43C4A]`)
-    document.querySelector('#analyticsNavText')?.classList.add(`font-['Shrikhand']`)
-    document.querySelector('#analyticsNavText')?.classList.add(`text-[#E43C4A]`)
-  }
+  //   if(route.fullPath === '/analytics') {
+  //   document.querySelector('#hostsNavText')?.classList.add(`font-['Shrikhand']`)
+  //   document.querySelector('#hostsNavText')?.classList.add(`text-[#E43C4A]`)
+  //   document.querySelector('#analyticsNavText')?.classList.add(`font-['Shrikhand']`)
+  //   document.querySelector('#analyticsNavText')?.classList.add(`text-[#E43C4A]`)
+  // }
 });
 
 onMounted(async () => {
@@ -134,9 +134,9 @@ function showNav(){
                       <li>
                         <RouterLink @click="showNav" to="/dashboard" class="block px-4 py-2 text-stone-800 bg-blue-700 rounded bg-transparent"> <p id="dashboardNavText" class="navText">Dashboard</p></RouterLink>
                       </li>
-                      <li>
+                      <!-- <li>
                         <RouterLink @click="showNav" to="/analytics" class="block px-4 py-2 text-stone-800 bg-blue-700 rounded bg-transparent"> <p id="analyticsNavText" class="navText">Analytics</p></RouterLink>
-                      </li>
+                      </li> -->
 
                     </ul>
                     <div class="py-1">

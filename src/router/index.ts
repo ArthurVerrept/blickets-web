@@ -3,6 +3,7 @@ import SignIn from '../views/login-flow/SignInView.vue'
 import Home from '../views/Home.vue'
 import NeedMeta from '../views/login-flow/NeedMetaView.vue'
 import Dashboard from '../views/Dashboard.vue'
+import Analytics from '../views/Analytics.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,12 +14,12 @@ const router = createRouter({
       component: Home,
       props: true
     },
-    // {
-    //   path: '/ticket/:contractAddress/:ticketNumber/',
-    //   name: 'ticket',
-    //   component: TicketInfo,
-    //   props: true
-    // },
+    {
+      path: '/analytics/:contractAddress/',
+      name: 'analytics',
+      component: Analytics,
+      props: true
+    },
     {
       path: '/metamask',
       name: 'needMeta',

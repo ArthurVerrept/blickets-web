@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, defineEmits } from '@vue/runtime-core';
-import axios from 'axios'
 import { ref, watch } from 'vue';
+import router from '../router'
 
 let ticketPrice: number
 const ticketPriceEth = ref('')
@@ -113,16 +113,9 @@ async function checkStatus(txHash: string) {
   myCreatedEvents.value = await props.request.post('/event/my-created-events', { address: props.address })
 }
 
-function getColor(eventStatus: string) {
-  console.log(eventStatus)
-  let color = 'bg-gradient-to-r from-orange-300 to-amber-300'
-  if(eventStatus === 'success') {
-    color = 'bg-gradient-to-r bg-green-300  bg-lime-300'
-  } 
-  if (eventStatus === 'failed') {
-    color = 'bg-gradient-to-r bg-red-300 bg-rose-300'
-  }
-  return color + ' p-5 relative'
+async function viewEvent(contractAddress: string) {
+  console.log(contractAddress)
+  router.push({ name: 'analytics', params: { contractAddress } })
 }
 
 </script>
@@ -241,7 +234,7 @@ function getColor(eventStatus: string) {
                       </a>
                     </div>
                     <div v-if="event.deployedStatus === 'success'">
-                      <a class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 hover:bg-stone-900 focus:outline-none cursor-pointer">
+                      <a @click="viewEvent(event.contractAddress)" class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 hover:bg-stone-900 focus:outline-none cursor-pointer">
                         View Event
                         <svg class="ml-2 -mr-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                       </a>
