@@ -226,7 +226,7 @@ function getColor(eventStatus: string) {
                     </div>
                     <p class="mb-3 font-normal text-stone-800 truncate">Deployed Status: <b>{{event.deployedStatus}}</b></p>
                     <p class="mb-3 font-normal text-stone-800 truncate">Event Date: {{ new Date(parseInt(event.eventDate)).getDate() }} {{ new Date(parseInt(event.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(event.eventDate)).getFullYear() }}</p>
-                    <p class="mb-3 font-normal text-stone-800 truncate">Start Time:  {{ new Date(parseInt(event.eventDate)).toLocaleTimeString().split(':', 2)[0] }}:{{new Date(parseInt(event.eventDate)).toLocaleTimeString().split(':', 2)[1]}} </p>
+                    <p class="mb-3 font-normal text-stone-800 truncate">Start Time:  {{ new Date(parseInt(event.eventDate)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) }} </p>
                     
                     <div v-if="checkStatusLoading && event.deployedStatus !== 'success'">
                       <a class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-stone-800 cursor-default">

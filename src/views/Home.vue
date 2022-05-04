@@ -180,7 +180,7 @@ function newQRCode() {
                               </div>
                               <div class="flex">
                                 <svg class="w-4 h-4 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <p class="mb-1 font-normal text-stone-800">{{ new Date(parseInt(event.eventDate)).toLocaleTimeString().split(':', 2)[0] }}:{{new Date(parseInt(event.eventDate)).toLocaleTimeString().split(':', 2)[1]}} </p>
+                                <p class="mb-1 font-normal text-stone-800">{{ new Date(parseInt(event.eventDate)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) }} </p>
                               </div>
                           </div>
                         </div>
@@ -235,7 +235,7 @@ function newQRCode() {
                     <p class="text-4xl drop-shadow-lg font-extrabold text-white stroke-black">{{ticket.eventName}}</p>
                     <p class="text-lg font-bold text-white stroke-black">({{ticket.symbol}})</p>
                     <p class="font-bold text-white truncate">Event Date: {{ new Date(parseInt(ticket.eventDate)).getDate() }} {{ new Date(parseInt(ticket.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(ticket.eventDate)).getFullYear() }}</p>
-                    <p class="font-bold text-white truncate">Start Time:  {{ new Date(parseInt(ticket.eventDate)).toLocaleTimeString().split(':', 2)[0] }}:{{new Date(parseInt(ticket.eventDate)).toLocaleTimeString().split(':', 2)[1]}} </p>
+                    <p class="font-bold text-white truncate">Start Time:  {{ new Date(parseInt(ticket.eventDate)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) }} </p>
                     <p class="absolute w-full text-center mb-1 font-bold text-white bottom-6">Ticket Number</p>
                     <p class="absolute w-full text-center mb-1 font-bold text-white bottom-0">#{{ticket.ticketNumber}} of {{ticket.ticketAmount}}</p>
                   </div>
@@ -260,10 +260,6 @@ function newQRCode() {
       <div v-else>
         <div class="grid grid-cols-2 drop-shadow-md hover:drop-shadow-2xl transition-all">
           <button class="absolute top-8 left-8 z-10 text-2xl mb-6 bg-gray-200 p-2 rounded-xl" @click="viewTicket(currentTicket)">
-              <!-- <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg> -->
-              <!-- <svg class="w-8 h-8 stroke-stone-800" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> -->
-              <!-- <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg> -->
-              <!-- <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path></svg> -->
               <svg class="w-8 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             </button>
           <div class="w-full">
