@@ -18,7 +18,7 @@ const currentTicket = ref<any>()
 const myTicketsLoading = ref(true)
 const buyTicketLoading = ref(false)
 const buyTicketLoadingText = ref('')
-const ethPriceUSD = ref('0')
+// const ethPriceUSD = ref('0')
 
 const props = defineProps([
   'address',
@@ -43,10 +43,10 @@ watch(() => toggleViewTicket, async() => {
 
 onMounted(async () => {
   user.value = await props.request.get('/user/me')
-  const priceRes = await props.request.get('/blockchain/eth-price')
+  // const priceRes = await props.request.get('/blockchain/eth-price')
   events.value = await getAllEvents()
   myTickets.value = await getMyTickets()
-  ethPriceUSD.value = priceRes.ethPriceUSD
+  // ethPriceUSD.value = priceRes.ethPriceUSD
 })
 
 async function getAllEvents() {
@@ -242,7 +242,6 @@ function newQRCode() {
             <img class="w-2/3" :src="currentTicket.media" alt="Ticket image">
             <p>{{currentTicket.title}} </p>
             <p>{{currentTicket.description}} </p>
-            <p>Balance: {{currentTicket.balance}} </p>
             <p>{{currentTicket.eventName}} </p>
             <p>({{currentTicket.symbol}})</p>
             <p>{{user.name}}</p>
