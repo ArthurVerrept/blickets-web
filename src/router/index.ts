@@ -13,6 +13,12 @@ const router = createRouter({
       component: Home,
       props: true
     },
+    // {
+    //   path: '/ticket/:contractAddress/:ticketNumber/',
+    //   name: 'ticket',
+    //   component: TicketInfo,
+    //   props: true
+    // },
     {
       path: '/metamask',
       name: 'needMeta',
