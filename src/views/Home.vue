@@ -7,8 +7,11 @@ const qrCode = new QRious({ size: 300 })
 
 const events = ref<any>([])
 const user = ref<any>([])
-const masterKey = ref<any>([])
+const masterKey = ref<any>()
 const myInterval = ref<any>()
+const qrCodeVar = ref<any>()
+const qrLoading = ref(true)
+const qrReloading = ref(false)
 const eventsLoading = ref(true)
 const qrCodeTimeLeft = ref(100)
 const toggleViewTicket = ref(false)
@@ -32,12 +35,16 @@ watch(() => props.address, async() => {
   myTicketsLoading.value = false
 });
 
-watch(() => toggleViewTicket, async() => {
-  if(toggleViewTicket.value){
-    const urlNewMasterCodeUrl = '/event/master-key?contractAddress=' + currentTicket.value.contractAddress
-    masterKey.value = await props.request.get(urlNewMasterCodeUrl)
-  }
-});
+// watch(() => toggleViewTicket.value, async() => {
+//   console.log(toggleViewTicket.value)
+//   if(toggleViewTicket.value){
+//     qrLoading.value = true
+//     const urlNewMasterCodeUrl = '/event/master-key?contractAddress=' + currentTicket.value.contractAddress + '&address=' + props.address
+//     const urlNewMasterCode = await props.request.get(urlNewMasterCodeUrl)
+//     masterKey.value = urlNewMasterCode
+//     qrLoading.value = false
+//   }
+// });
 
 
 
@@ -102,18 +109,29 @@ async function viewTicket(ticket: any){
 
 async function getMasterKey() {
   if(toggleViewTicket.value) {
-    let expireMS = new Date().getTime() + 10000
+    qrLoading.value = true
+    const urlNewMasterCodeUrl = '/event/master-key?contractAddress=' + currentTicket.value.contractAddress + '&address=' + props.address
+    const urlNewMasterCode = await props.request.get(urlNewMasterCodeUrl)
+    masterKey.value = urlNewMasterCode
+    qrLoading.value = false
+    newQRCode()
+    let expireMS = parseInt(urlNewMasterCode.expiryTime) + 2000
     myInterval.value = setInterval(async () => {
       const currMS = new Date().getTime()
       const timeLeftMS = expireMS - currMS
 
-      const timeLeftPercent = (timeLeftMS / 10000) * 100
+      const timeLeftPercent = (timeLeftMS / 32000) * 100
+      // console.log(timeLeftPercent)
       qrCodeTimeLeft.value = timeLeftPercent
-      if(qrCodeTimeLeft.value <= 2 ){
-        expireMS = new Date().getTime() + 10000
-          const urlNewMasterCodeUrl = '/event/master-key?contractAddress=' + currentTicket.value.contractAddress + '&address=' + props.address
-          const urlNewMasterCode = await props.request.get(urlNewMasterCodeUrl)
-          console.log(parseInt(urlNewMasterCode.expiryTime))
+      if(qrCodeTimeLeft.value <= 15){
+        qrReloading.value = true
+        if(qrCodeTimeLeft.value <= 0){
+        qrCodeTimeLeft.value = 0
+        const newExpiry = await props.request.get(urlNewMasterCodeUrl)
+        masterKey.value = newExpiry
+        expireMS = parseInt(newExpiry.expiryTime) + 2000
+        newQRCode()
+        }
       }
     }, 200)
   } 
@@ -124,8 +142,11 @@ function newQRCode() {
   // const urlNewMasterCod = await props.request.get(urlNewMasterCodeUrl)
   // const url = '/event/validate?contractAddress=' + currentTicket.value.contractAddress + '&address=' + props.address + '&ticketId=' + currentTicket.value.ticketNumber + '&masterCode=master';
   // await props.request.get(url)
-  qrCode.value = 'www.url.com'
-  return qrCode.toDataURL();
+  console.log(masterKey.value.masterKey)
+  console.log(masterKey.value.masterKey + currentTicket.value.contractAddress)
+  qrCode.value = masterKey.value.masterKey + currentTicket.value.contractAddress
+  qrCodeVar.value = qrCode.toDataURL();
+  qrReloading.value = false
 }
 
 </script>
@@ -237,23 +258,47 @@ function newQRCode() {
         </div> 
       </div>
       <div v-else>
-        <button @click="viewTicket(currentTicket)">back</button>
-        <div class="grid grid-cols-2">
-          <div class="w-full pr-4 border">
-            <img class="w-2/3" :src="currentTicket.media" alt="Ticket image">
-            <p>{{currentTicket.title}} </p>
-            <p>{{currentTicket.description}} </p>
-            <p>{{currentTicket.eventName}} </p>
-            <p>({{currentTicket.symbol}})</p>
-            <p>{{user.name}}</p>
-            <p>{{currentTicket.ticketNumber}} of {{currentTicket.ticketAmount}} </p>
-            <p>{{currentTicket.eventDate}}</p>
+        <div class="grid grid-cols-2 drop-shadow-md hover:drop-shadow-2xl transition-all">
+          <button class="absolute top-8 left-8 z-10 text-2xl mb-6 bg-gray-200 p-2 rounded-xl" @click="viewTicket(currentTicket)">
+              <!-- <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg> -->
+              <!-- <svg class="w-8 h-8 stroke-stone-800" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> -->
+              <!-- <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg> -->
+              <!-- <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path></svg> -->
+              <svg class="w-8 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </button>
+          <div class="w-full">
+            <img class="w-full border-l-2 border-t-2 border-b-2 rounded-l-2xl border-slate-400" :src="currentTicket.media" alt="Ticket image">
           </div>
-          <div class="w-full pr-4 border">
-            <div class="w-1/3 bg-gray-200 h-2.5 dark:bg-gray-700">
-              <div class="bg-blue-600 h-2.5" :style="`width: ${qrCodeTimeLeft}%`"></div>
-            </div>
-            <img :src="newQRCode()" alt="QRCode" />
+          <div class="w-full flex flex-col justify-center border-r-4 border-t-2 border-b-2 rounded-r-2xl border-slate-400 px-10 bg-white">
+            <div class="flex">
+              <div>
+                <div v-if="qrLoading" class="w-56 h-56 flex justify-center">
+                    <svg role="status" class="mr-2 mt-20 w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-[#E43C4A]" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                      <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                    </svg>
+                  </div>
+                  <div v-else-if="qrReloading">
+                    <img class="animate-pulse w-56" :src="qrCodeVar" alt="QRCode" />
+                  </div>
+                  <div v-else>
+                    <img class="w-56 h-full" :src="qrCodeVar" alt="QRCode" />
+                  </div>
+                  <div class="w-56 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
+                    <div class="bg-[#E43C4A] rounded-full h-2.5 w-56 transition-all" :style="`width: ${qrCodeTimeLeft}%`"></div>
+                  </div>
+                </div>
+                <div class="ml-5">
+                  <p class="font-bold text-xl mt-4">{{currentTicket.eventName}}</p>
+                  <p class="mt-2">name:</p>
+                  <p class="font-bold">{{user.name}}</p>
+                  <p class="mt-2">date:</p>
+                  <p class="font-bold">{{ new Date(parseInt(currentTicket.eventDate)).getDate() }} {{ new Date(parseInt(currentTicket.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(currentTicket.eventDate)).getFullYear() }} - {{ new Date(parseInt(currentTicket.eventDate)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) }}</p>
+                  <p class="mt-2">ticket number:</p>
+                  <p class="font-bold">{{currentTicket.ticketNumber}} of {{currentTicket.ticketAmount}} </p>
+                </div>
+              </div>
+              <p class="mt-16">{{currentTicket.description}} </p>
           </div>
         </div> 
       </div>
