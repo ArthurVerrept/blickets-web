@@ -7,6 +7,8 @@ const event = ref()
 
 const newAdminEmail = ref('')
 
+const loading = ref(true)
+
 const rate = ref()
 
 const route = useRoute()
@@ -17,8 +19,8 @@ const props = defineProps([
 ])
 
 onBeforeMount(async () => {
-  console.log(props)
   await getData()
+  loading.value = false
 }) 
 
 async function getData() {
@@ -51,7 +53,7 @@ function closeTooltip(element: string) {
   <main>
     <div class="px-24 pb-24">
         <!-- <p class="text-4xl mb-8">Analytics</p> -->
-      <div class="flex justify-space">
+      <div v-if="!loading" class="flex justify-space">
         <div class="w-2/3 pr-4">
           <div class="flex justify-between">
             <div class="px-2 w-2/3">
@@ -86,7 +88,7 @@ function closeTooltip(element: string) {
                 <a :href="'https://testnets.opensea.io/get-listed/step-two'" target="blank">
                   <img @mouseenter="openTooltip('opensea')"  @mouseleave="closeTooltip('opensea')" class="w-12 ring rounded-full ring-offset-2 hover:ring-offset-4 ring-stone-800" src="../assets/Logomark-Blue.png" alt="">
                 </a>
-                <div id="opensea" role="tooltip" class="text-center inline-block transition-opacity absolute top-[-45px] left-[-110px] invisible z-10 py-2 px-3 text-sm font-medium text-white bg-stone-800 rounded-lg shadow-sm duration-300 tooltip dark:bg-gray-700">
+                <div id="opensea" role="tooltip" class="text-center inline-block transition-opacity absolute top-[-45px] left-[-105px] invisible z-10 py-2 px-3 text-sm font-medium text-white bg-stone-800 rounded-lg shadow-sm duration-300 tooltip dark:bg-gray-700">
                     Add your collections on opensea
                 </div>
               </div>
@@ -126,6 +128,9 @@ function closeTooltip(element: string) {
         <div class="w-2/5 pr-4">
           <img :src="event.imageUrl" alt="nft collection image">
         </div>
+      </div>
+      <div v-else>
+        <p>Loading</p>
       </div>
     </div>
   </main>
