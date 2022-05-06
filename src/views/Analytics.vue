@@ -45,7 +45,20 @@ function closeTooltip(element: string) {
   document.getElementById(element)?.classList.add('invisible')
 }
 
+async function withdraw() {
+  console.log('withdraw')
+  const params = await props.request.post('/blockchain/withdraw', { contractAddress: route.params.contractAddress, address: props.address })
 
+  const transactionParameters = {
+      ...params,
+      from: props.address
+  }
+
+  const txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [transactionParameters],
+  });
+}
 
 </script>
 
@@ -62,30 +75,49 @@ function closeTooltip(element: string) {
               <p>Tickets sold: </p>
               <p class="font-bold">{{event.ticketsSold}} of {{event.ticketAmount}}</p>
               <p>Percentage sold:</p>
-              <p class="font-bold">{{parseInt(event.ticketsSold) / parseInt(event.ticketAmount) * 100}}%</p>
+              <p class="font-bold">{{(parseInt(event.ticketsSold) / parseInt(event.ticketAmount) * 100).toFixed(2)}}%</p>
               <p>Revenue:</p>
               <p class="font-bold text-lime-600"> ${{getUsdValue(event.currentBalance)}} </p>
 
               <p>Ticket price:</p>
-              <p class="font-bold mb-4"> ${{getUsdValue(event.ticketPrice)}} </p>
+              <p class="font-bold"> ${{getUsdValue(event.ticketPrice)}} </p>
 
               <p>Event date:</p>
-              <p class="font-bold mb-4"> {{ new Date(parseInt(event.eventDate)).getDate() }} {{ new Date(parseInt(event.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(event.eventDate)).getFullYear() }} at {{ new Date(parseInt(event.eventDate)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) }} 
+              <p class="font-bold"> {{ new Date(parseInt(event.eventDate)).getDate() }} {{ new Date(parseInt(event.eventDate)).toLocaleString('default', { month: 'short' }) }} {{ new Date(parseInt(event.eventDate)).getFullYear() }} at {{ new Date(parseInt(event.eventDate)).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }) }} 
               </p>
+
+              <p>Contract Address:</p>
+              <p class="font-bold"> {{ route.params.contractAddress }} </p>
               
+              <div class="relative flex my-8">
+                <a @click="withdraw()" @mouseenter="openTooltip('withdraw')"  @mouseleave="closeTooltip('withdraw')" class="inline-flex mt-2 h-12 p-4 items-center px-3 text-sm font-medium text-center text-white bg-stone-800 hover:bg-stone-900 focus:outline-none cursor-pointer">
+                  <p class="font-bold text-lg"> withdraw </p>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                    <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+                <p class="text-sm ml-2 flex">
+                <svg class="w-14 h-14 ml-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  Withdrawals are paid to the deployer wallet used to create the event. This event was deployed by {{event.deployerAddress}}
+                </p>
+                <div id="withdraw" role="tooltip" class="text-center inline-block transition-opacity absolute top-[-30px] left-[150px] invisible z-10 py-2 px-3 text-sm font-medium text-white bg-stone-800 rounded-lg shadow-sm duration-300 tooltip dark:bg-gray-700">
+                    You can withdraw as many times as you want from your event, however, every withdrawal has a blockchain processing fee. For this reason we recommend you do not withdraw until the event has finished.
+                </div>
+              </div>
             </div>
             <div class="px-2 flex flex-col justify-evenly">
               <div class="relative">
-                <a :href="'https://rinkeby.etherscan.io/tx/' + event.txHash" target="blank">
+                <a :href="'https://rinkeby.etherscan.io/address/' + route.params.contractAddress" target="_blank">
                   <img @mouseenter="openTooltip('etherscan')"  @mouseleave="closeTooltip('etherscan')" class="w-12 ring rounded-full ring-offset-2 hover:ring-offset-4 ring-stone-800 mr-28" src="../assets/etherscan-logo-circle.png" alt="">
                 </a>
-                <div id="etherscan" role="tooltip" class="inline-block absolute top-[-45px] left-[-100px] invisible z-10 py-2 px-3 text-sm font-medium text-white bg-stone-800 rounded-lg shadow-sm tooltip dark:bg-gray-700">
-                    View transaction on etherscan
+                <div id="etherscan" role="tooltip" class="inline-block absolute top-[-45px] left-[-85px] invisible z-10 py-2 px-3 text-sm font-medium text-white bg-stone-800 rounded-lg shadow-sm tooltip dark:bg-gray-700">
+                    View contract on etherscan
                 </div>
               </div>
               <!-- TODO -->
               <div class="relative">
-                <a :href="'https://testnets.opensea.io/get-listed/step-two'" target="blank">
+                <a :href="'https://testnets.opensea.io/get-listed/step-two'" target="_blank">
                   <img @mouseenter="openTooltip('opensea')"  @mouseleave="closeTooltip('opensea')" class="w-12 ring rounded-full ring-offset-2 hover:ring-offset-4 ring-stone-800" src="../assets/Logomark-Blue.png" alt="">
                 </a>
                 <div id="opensea" role="tooltip" class="text-center inline-block transition-opacity absolute top-[-45px] left-[-105px] invisible z-10 py-2 px-3 text-sm font-medium text-white bg-stone-800 rounded-lg shadow-sm duration-300 tooltip dark:bg-gray-700">
@@ -94,7 +126,7 @@ function closeTooltip(element: string) {
               </div>
 
               <div class="relative">
-                <a class="w-12" :href="'https://rinkeby.rarible.com/collection/' + route.params.contractAddress + '/items'" target="blank">
+                <a class="w-12" :href="'https://rinkeby.rarible.com/collection/' + route.params.contractAddress + '/items'" target="_blank">
                   <img @mouseenter="openTooltip('rarible')"  @mouseleave="closeTooltip('rarible')" class="w-12 ring rounded-lg ring-offset-2 hover:ring-offset-4 ring-stone-800" src="../assets/rarible.png" alt="">
                 </a>
                 <div id="rarible" role="tooltip" class="inline-block transition-opacity absolute top-[-45px] left-[-80px] invisible z-10 py-2 px-3 text-sm font-medium text-white bg-stone-800 rounded-lg shadow-sm duration-300 tooltip dark:bg-gray-700">

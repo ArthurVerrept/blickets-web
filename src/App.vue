@@ -156,7 +156,7 @@ function showNav(){
       </nav>
     </header>
   </div>
-  <body class="relative">
+  <body class="relative mainBody">
     <RouterView @updateAddress="updateAddress" @errorPopup="handleError"  :request="request" :address="address" :tokens="{accessToken, refreshToken}"  @reload="reload" />
     <div v-if="errorState" class="sticky bottom-2 z-10 flex justify-center">
       <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
@@ -166,3 +166,8 @@ function showNav(){
   </body>
 </template>
 
+<style scoped>
+.mainBody::-webkit-scrollbar {
+  display: none;
+}
+</style>
