@@ -151,7 +151,7 @@ function newQRCode() {
       <div v-if="!toggleViewTicket">
         <div class="flex justify-evenly">
           <div class="w-1/2 pr-4">
-            <div class="px-6 pb-6 h-[40rem] overflow-auto bg-white border border-gray-200">
+            <div class="px-6 pb-6 h-[40rem] overflow-auto bg-white border rounded-2xl border-gray-200">
 
               <div class="sticky top-0 z-10 py-3 bg-white">
                 <h1 class="text-4xl mt-4">Events</h1>
@@ -215,7 +215,7 @@ function newQRCode() {
           </div>
 
 
-          <div class="block px-6 pb-6 w-1/2 bg-white border border-gray-200 h-[40rem] overflow-auto">
+          <div class="block px-6 pb-6 w-1/2 bg-white border rounded-2xl border-gray-200 h-[40rem] overflow-auto">
 
             <div class="sticky top-0 z-10 py-3 bg-white">
               <h1 class="text-4xl my-4">My Tickets</h1>

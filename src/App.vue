@@ -166,8 +166,8 @@ function showNav(){
   </body>
 </template>
 
-<style scoped>
-.mainBody::-webkit-scrollbar {
+<style>
+div::-webkit-scrollbar {
   display: none;
 }
 </style>
