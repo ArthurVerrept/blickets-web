@@ -35,19 +35,6 @@ watch(() => props.address, async() => {
   myTicketsLoading.value = false
 });
 
-// watch(() => toggleViewTicket.value, async() => {
-//   console.log(toggleViewTicket.value)
-//   if(toggleViewTicket.value){
-//     qrLoading.value = true
-//     const urlNewMasterCodeUrl = '/event/master-key?contractAddress=' + currentTicket.value.contractAddress + '&address=' + props.address
-//     const urlNewMasterCode = await props.request.get(urlNewMasterCodeUrl)
-//     masterKey.value = urlNewMasterCode
-//     qrLoading.value = false
-//   }
-// });
-
-
-
 onMounted(async () => {
   user.value = await props.request.get('/user/me')
   // const priceRes = await props.request.get('/blockchain/eth-price')
@@ -101,6 +88,7 @@ function getPercetage(event: any) {
 }
 
 async function viewTicket(ticket: any){
+  await props.request.refreshToken()
   currentTicket.value = ticket
   toggleViewTicket.value = !toggleViewTicket.value
   clearInterval(myInterval.value)
@@ -138,9 +126,15 @@ async function getMasterKey() {
 }
 
 function newQRCode() {
-  qrCode.value = masterKey.value.masterKey + currentTicket.value.contractAddress
+  qrCode.value = masterKey.value.masterKey + currentTicket.value.contractAddress + localStorage.getItem('accessToken')
   qrCodeVar.value = qrCode.toDataURL();
   qrReloading.value = false
+}
+
+async function validateQr() {
+  console.log({ masterCode: masterKey.value.masterKey, contractAddress: currentTicket.value.contractAddress, address: props.address, currentTicket: currentTicket.value.ticketNumber })
+  await props.request.post('/event/validate', { masterCode: masterKey.value.masterKey, contractAddress: currentTicket.value.contractAddress, address: props.address, ticketId: currentTicket.value.ticketNumber, accessToken: localStorage.getItem('accessToken') })
+
 }
 
 </script>
@@ -272,7 +266,7 @@ function newQRCode() {
                     <img class="animate-pulse w-56" :src="qrCodeVar" alt="QRCode" />
                   </div>
                   <div v-else>
-                    <img class="w-56 h-full" :src="qrCodeVar" alt="QRCode" />
+                    <img class="w-56 h-full" :src="qrCodeVar" alt="QRCode" @click="validateQr()"/>
                   </div>
                   <div class="w-56 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
                     <div class="bg-[#E43C4A] rounded-full h-2.5 w-56 transition-all" :style="`width: ${qrCodeTimeLeft}%`"></div>
