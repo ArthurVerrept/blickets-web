@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import NeedMeta from '../views/login-flow/NeedMetaView.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Analytics from '../views/Analytics.vue'
+import Account from '../views/Account.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -16,7 +16,8 @@ class Request {
             const res = await axios.post(this.baseUrl + endpoint, data, { headers })
             return res.data
         } catch (error: any) {
-            if  (error.response.data.statusCode == 401 && error.response.data.message == "TokenExpiredError") {
+            console.log(error.response)
+            if  (error.response.status == 401 && error.response.data.message.includes("TokenExpiredError")) {
                 const newAccessToken = await this.refreshToken()
                 if(newAccessToken) {
                     localStorage.setItem('accessToken', newAccessToken)
@@ -35,7 +36,7 @@ class Request {
             return res.data
 
         } catch (error: any) {
-            if  (error.response.data.statusCode == 401 && error.response.data.message == "TokenExpiredError") {
+            if  (error.response.status == 401 && error.response.data.message.includes("TokenExpiredError")) {
                 const newAccessToken = await this.refreshToken()
                 if(newAccessToken) {
                     localStorage.setItem('accessToken', newAccessToken)

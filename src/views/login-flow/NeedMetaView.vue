@@ -85,7 +85,7 @@ async function getAndUpdateAccount() {
         <p class="font-['Shrikhand'] text-[#E43C4A] font-bold text-7xl mb-10 text-center pt-20">Blickets</p>
         <div class="mb-10 flex justify-center">
           <div v-if="!userLoading">
-            <img class="w-16 h-16 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" :src="user.picture" alt="Bordered avatar">
+            <img class="w-16 h-16 p-1 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" :src="user.picture" alt="Bordered avatar" referrerpolicy="no-referrer">
           </div>
           <div v-else>
             <svg class="w-16 h-16 p-1 rounded-full ring-2 fill-gray-400 ring-gray-400" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>

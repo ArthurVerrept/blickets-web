@@ -15,6 +15,7 @@ const qrReloading = ref(false)
 const eventsLoading = ref(true)
 const qrCodeTimeLeft = ref(100)
 const toggleViewTicket = ref(false)
+const ticketScanSuccess = ref(false)
 
 const myTickets = ref<any>([])
 const currentTicket = ref<any>()
@@ -132,9 +133,14 @@ function newQRCode() {
 }
 
 async function validateQr() {
-  console.log({ masterCode: masterKey.value.masterKey, contractAddress: currentTicket.value.contractAddress, address: props.address, currentTicket: currentTicket.value.ticketNumber })
-  await props.request.post('/event/validate', { masterCode: masterKey.value.masterKey, contractAddress: currentTicket.value.contractAddress, address: props.address, ticketId: currentTicket.value.ticketNumber, accessToken: localStorage.getItem('accessToken') })
-
+  const res = await props.request.post('/event/validate', { masterCode: masterKey.value.masterKey, contractAddress: currentTicket.value.contractAddress, address: props.address, ticketId: currentTicket.value.ticketNumber, accessToken: localStorage.getItem('accessToken') })
+  console.log(res)
+  if(res) {
+    ticketScanSuccess.value = true
+    setTimeout(() => {
+      ticketScanSuccess.value = false
+    }, 5000)
+  }
 }
 
 </script>
@@ -285,6 +291,11 @@ async function validateQr() {
               <p class="mt-12">{{currentTicket.description}} </p>
           </div>
         </div> 
+      </div>
+    </div>
+    <div v-if="ticketScanSuccess" class="sticky bottom-2 z-10 flex justify-center">
+      <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg bg-green-200 text-green-800" role="alert">
+        <span class="font-medium">Ticket scanned successfully</span>
       </div>
     </div>
   </main>
