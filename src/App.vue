@@ -33,7 +33,11 @@ async function load() {
   if (localStorage.getItem('accessToken') && localStorage.getItem('refreshToken') && address.value === '') {
     router.replace('/metamask')
   }
-   
+  
+  if(accessToken.value && refreshToken.value) {
+    await getUser()
+    await getAddresses()
+  }
   // TODO: handle someone exiting google sign in and coming back to site
 }
 
@@ -64,8 +68,6 @@ watch(() => route.fullPath, async() => {
 onMounted(async () => {
   request.value = new Request(handleError)
   load()
-  await getUser()
-  await getAddresses()
   userLoading.value = false
 })
 
@@ -116,6 +118,14 @@ function showNav(el: string){
   }
 }
 
+function signOut() {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+  localStorage.removeItem('gotAuthCode')
+  load()
+
+}
+
 </script>
 
 <template>
@@ -147,9 +157,9 @@ function showNav(el: string){
                     </div>
                 </div>
               </li>
-              <li class="absolute top-[30px] right-28">
+              <li class="absolute top-[30px] right-[106px]">
                 <div v-if="!userLoading">
-                  <img @click="showNav('userDropdown')" class="w-10 h-10 rounded-full  ring-2 ring-gray-300 dark:ring-gray-500" :src="user.picture" alt="Bordered avatar" referrerpolicy="no-referrer">
+                  <img @click="showNav('userDropdown')" class="w-10 h-10 rounded-full ring-4 ring-blue-100 dark:ring-gray-500" :src="user.picture" alt="Bordered avatar" referrerpolicy="no-referrer">
                 </div>
                 <div v-else>
                   <svg class="w-16 h-16 p-1 rounded-full ring-2 fill-gray-400 ring-gray-400" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
@@ -169,7 +179,7 @@ function showNav(el: string){
                     </div>
                   </div>
                   <div class="">
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Sign out</a>
+                    <a @click="signOut" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Sign out</a>
                   </div>
                 </div>
               </li>
