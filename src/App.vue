@@ -166,7 +166,7 @@ function signOut() {
                       <p>username:</p>
                       <p class="mb-4 font-bold">{{user.name}}</p>
                     </div>
-                    <p>Addresses:</p>
+                    <p class="mb-1">Addresses:</p>
                     <div v-for="currAddress in ethAddresses.addresses" class="pb-2"> 
                         <span v-if="currAddress === address" class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">{{currAddress.substring(0, 4)}}...{{currAddress.substring(39)}} - connected</span>
                         <span v-else class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">{{currAddress.substring(0, 4)}}...{{currAddress.substring(39)}}</span>
