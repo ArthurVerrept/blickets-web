@@ -141,9 +141,6 @@ function signOut() {
               <li>
                 <RouterLink to="/" class="block homeNav py-2 pr-4 pl-3 text-stone-800 bg-blue-700 rounded bg-transparent md:p-0 dark:text-white"><p id="homeNavText" class="navText">Home</p></RouterLink>
               </li>
-              <li>
-                <RouterLink to="/account" id="account" class="block py-2 pr-4 pl-3 text-stone-800 bg-blue-700 rounded bg-transparent md:p-0 dark:text-white"><p id="accountNavText" class="navText">Account</p></RouterLink>
-              </li>
               <li class="relative">
                 <button @click="showNav('dropdown')" class="block text-sm font-medium text-stone-800 flex items-center"> <p id="hostsNavText" class="navText">Hosts</p><svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg></button>
                 <div id="dropdown" class="z-20 absolute hidden bg-white divide-y divide-gray-100 right-[-40px] top-6 rounded shadow w-36 dark:bg-gray-700 dark:divide-gray-600">
@@ -152,9 +149,6 @@ function signOut() {
                         <RouterLink @click="showNav('dropdown')" to="/dashboard" class="block px-4 py-2 text-stone-800 bg-blue-700 rounded bg-transparent"> <p id="dashboardNavText" class="navText">Dashboard</p></RouterLink>
                       </li>
                     </ul>
-                    <div class="py-1">
-                      <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Sign out</a>
-                    </div>
                 </div>
               </li>
               <li class="absolute top-[30px] right-[106px]">
