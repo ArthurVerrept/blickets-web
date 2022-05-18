@@ -9,7 +9,7 @@ onBeforeMount(async () => {
 })
 
 async function getUrl() {
-  let res = await axios.get("http://localhost:3000/user/auth-url")
+  let res = await axios.get("https://gateway-3jjrtrh3ha-ew.a.run.app/user/auth-url")
   console.log(res.data)
   localStorage.setItem('gotAuthCode', 'true')
   window.location.replace(res.data.url)

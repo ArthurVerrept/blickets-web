@@ -8,7 +8,7 @@ class Request {
         this.handleError = handleError
     }
     someFunc = inject('errorPopup');
-    baseUrl = 'http://localhost:3000'
+    baseUrl = 'https://gateway-3jjrtrh3ha-ew.a.run.app'
 
     async post(endpoint: string, data?: any) {
         const headers = { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }

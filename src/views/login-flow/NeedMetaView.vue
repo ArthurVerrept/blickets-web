@@ -11,6 +11,7 @@ onBeforeMount(async () => {
   user.value = await props.request.get('/user/me')
   userLoading.value = false
   const account = await getAndUpdateAccount()
+  await props.request.post('/user/add-address', { address: account })
   emit('updateAddress', account)
 })
 

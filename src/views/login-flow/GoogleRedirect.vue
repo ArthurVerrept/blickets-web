@@ -7,7 +7,7 @@ const route = useRoute();
 const emit = defineEmits(['reload'])
 onBeforeMount(async () => {
   console.log('nce only')
-  let res = await axios.post("http://localhost:3000/user/google-login", {code: route.query.code})
+  let res = await axios.post("https://gateway-3jjrtrh3ha-ew.a.run.app/user/google-login", {code: route.query.code})
   console.log(res.data.accessToken)
   localStorage.setItem('accessToken', res.data.accessToken)
   localStorage.setItem('refreshToken', res.data.refreshToken)

@@ -38,6 +38,9 @@ async function load() {
     await getUser()
     await getAddresses()
   }
+
+  navActive('#homeNavText')
+  navActive('#homeNavText')
   // TODO: handle someone exiting google sign in and coming back to site
 }
 
@@ -47,23 +50,23 @@ watch(() => route.fullPath, async() => {
     link.classList.remove(`font-['Shrikhand']`)
     link.classList.remove(`text-[#E43C4A]`)
   })
-  console.log(navLinks)
   if(route.fullPath === '/') {
-    document.querySelector('#homeNavText')?.classList.add(`font-['Shrikhand']`)
-    document.querySelector('#homeNavText')?.classList.add(`text-[#E43C4A]`)
+    navActive('#homeNavText')
+    navActive('#homeNavText')
   }
   if(route.fullPath === '/account') {
-    document.querySelector('#accountNavText')?.classList.add(`font-['Shrikhand']`)
-    document.querySelector('#accountNavText')?.classList.add(`text-[#E43C4A]`)
+    navActive('#accountNavText')
+    navActive('#accountNavText')
   }
 
   if(route.fullPath === '/dashboard') {
-    document.querySelector('#hostsNavText')?.classList.add(`font-['Shrikhand']`)
-    document.querySelector('#hostsNavText')?.classList.add(`text-[#E43C4A]`)
-    document.querySelector('#dashboardNavText')?.classList.add(`font-['Shrikhand']`)
-    document.querySelector('#dashboardNavText')?.classList.add(`text-[#E43C4A]`)
+    navActive('#hostsNavText')
+    navActive('#hostsNavText')
+    navActive('#dashboardNavText')
+    navActive('#dashboardNavText')
   }
 });
+
 
 onMounted(async () => {
   request.value = new Request(handleError)
@@ -71,6 +74,10 @@ onMounted(async () => {
   userLoading.value = false
 })
 
+function navActive(className: string) {
+  document.querySelector(className)?.classList.add(`font-['Shrikhand']`)
+  document.querySelector(className)?.classList.add(`text-[#E43C4A]`)
+}
 
 async function getUser() {
   user.value = await request.value.get('/user/me')
