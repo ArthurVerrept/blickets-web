@@ -9,6 +9,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@babel/types": "^7.17.12",
     "axios": "^0.26.1",
     "flowbite": "^1.4.2",
     "qrious": "^4.0.2",

@@ -1,6 +1,8 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { onMounted } from '@vue/runtime-core';
 import { ref, watch } from 'vue';
+// @ts-ignore
 import QRious from 'qrious'
 
 const qrCode = new QRious({ size: 300 })
@@ -70,6 +72,7 @@ async function buyTicket(contractAddress: string) {
   buyTicketLoadingText.value = 'Waiting for metamask confirmation...'
 
     try {
+      // @ts-ignore
       const txHash = await window.ethereum.request({
         method: 'eth_sendTransaction',
         params: [transactionParameters],
@@ -159,6 +162,7 @@ async function validateQr() {
               </div>
               
               <div class="grid grid-cols-2 gap-2">
+                <!-- eslint-disable-next-line vue/require-v-for-key eslint-disable-next-line vue/no-use-v-if-with-v-for  -->
                 <div v-if="!eventsLoading && !buyTicketLoading && events.events" v-for="event in events.events" class="my-2">
                   <div class="relative bg-whites border">
                     <div class="w-full">
@@ -220,7 +224,7 @@ async function validateQr() {
             <div class="sticky top-0 z-10 py-3 bg-white">
               <h1 class="text-4xl my-4">My Tickets</h1>
             </div>
-            
+              <!-- eslint-disable-next-line vue/require-v-for-key eslint-disable-next-line vue/no-use-v-if-with-v-for  -->
               <div v-if="!myTicketsLoading && myTickets.events" v-for="ticket in myTickets.events" class="my-2">
                 <div @click="viewTicket(ticket)" class="relative flex mb-[-170px] hover:mb-0 transition-all">
                   <img class="w-full object-cover h-72 rounded-2xl" :src="ticket.media" alt="">

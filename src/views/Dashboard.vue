@@ -4,9 +4,9 @@ import { ref, watch } from 'vue';
 import router from '../router'
 
 let ticketPrice: number
-const ticketPriceEth = ref('')
+const ticketPriceEth = ref<any>('')
 let ticketResalePrice: number
-const ticketResalePriceEth = ref('')
+const ticketResalePriceEth = ref<any>('')
 
 let ticketAmount: number
 let symbol: string
@@ -80,6 +80,8 @@ async function submitEvent(name: string, symbol: string, ticketAmount: number, t
 
       loadingText.value = 'Waiting for metamask confirmation...'
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const txHash = await window.ethereum.request({
         method: 'eth_sendTransaction',
         params: [transactionParameters],
@@ -207,6 +209,7 @@ async function viewEvent(contractAddress: string) {
               <h1 class="text-4xl my-4">Created Events</h1>
             </div>
             <div class="grid grid-cols-3 gap-2">
+              <!-- eslint-disable-next-line vue/require-v-for-key eslint-disable-next-line vue/no-use-v-if-with-v-for -->
               <div v-if="!myCreatedEventsLoading && myCreatedEvents.events" v-for="event in myCreatedEvents.events">
                 <div class="max-w-sm bg-white  border border-gray-200">
                   <img :src="event.imageUrl" alt="" />

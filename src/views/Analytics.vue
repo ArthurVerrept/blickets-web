@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { onBeforeMount } from "@vue/runtime-core"
 import { ref } from "vue"
 import { useRoute } from "vue-router"
@@ -53,7 +54,7 @@ async function withdraw() {
       ...params,
       from: props.address
   }
-
+  // @ts-ignore
   const txHash = await window.ethereum.request({
       method: 'eth_sendTransaction',
       params: [transactionParameters],

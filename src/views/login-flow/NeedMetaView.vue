@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { defineEmits, onBeforeMount, defineProps, ref } from 'vue'
 
 let user = ref<any>()
@@ -21,6 +22,7 @@ async function openMeta() {
 }
 
 async function getAndUpdateAccount() {
+  // @ts-ignore
   const [account] = await window.ethereum.request({ method: 'eth_requestAccounts' });
  
   return account

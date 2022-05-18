@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createRouter, createWebHistory } from 'vue-router'
 import SignIn from '../views/login-flow/SignInView.vue'
 import Home from '../views/Home.vue'
 import NeedMeta from '../views/login-flow/NeedMetaView.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Analytics from '../views/Analytics.vue'
-import Account from '../views/Account.vue'
 
 const router = createRouter({
+  // @ts-ignore
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
