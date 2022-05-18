@@ -143,7 +143,7 @@ function signOut() {
     <header>
       <nav class="bg-white py-2.5">
         <div class="flex flex-wrap justify-between items-center w-full px-24">
-          <a href="http://localhost:8080" class="flex items-center">
+          <a href="https://neon-bublanina-2cabfe.netlify.app/" class="flex items-center">
               <p class="font-['Shrikhand'] text-[#E43C4A] font-bold text-4xl text-center py-5">Blickets</p>
           </a>
           <div class="hidden w-full md:block w-auto" id="mobile-menu">
