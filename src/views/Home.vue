@@ -298,7 +298,7 @@ async function validateQr() {
       </div>
     </div>
     <div v-if="ticketScanSuccess" class="sticky bottom-2 z-10 flex justify-center">
-      <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg bg-green-200 text-green-800" role="alert">
+      <div class="p-4 mb-4 text-sm bg-red-100 rounded-lg bg-green-200 text-green-800" role="alert">
         <span class="font-medium">Ticket scanned successfully</span>
       </div>
     </div>
